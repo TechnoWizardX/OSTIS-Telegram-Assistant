@@ -2,20 +2,20 @@
 
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-kitty --title KB_MACHINE bash -c "
+bash --title KB_MACHINE bash -c "
 cd '$PROJECT_DIR'
 ./scripts/start.sh build_kb
 ./scripts/start.sh machine
 exec bash
 " &
 
-kitty --title WEB bash -c "
+bash --title WEB bash -c "
 cd '$PROJECT_DIR'
 ./scripts/start.sh web
 exec bash
 " &
 
-kitty --title INTERFACE bash -c "
+bash --title INTERFACE bash -c "
 cd '$PROJECT_DIR'
 ./scripts/start.sh interface
 exec bash

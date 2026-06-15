@@ -2,9 +2,9 @@
 
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-pkill -f "kitty.*KB_MACHINE"
-pkill -f "kitty.*WEB"
-pkill -f "kitty.*INTERFACE"
+pkill -f "bash.*KB_MACHINE"
+pkill -f "bash.*WEB"
+pkill -f "bash.*INTERFACE"
 
 sleep 1
 
