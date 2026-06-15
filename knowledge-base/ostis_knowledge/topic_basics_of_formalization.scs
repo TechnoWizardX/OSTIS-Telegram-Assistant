@@ -15,4 +15,4 @@ topic_basics_of_formalization
     (*
         <- lang_ru;;
     *);
-<= nrel_inclusion: concept_sc_code;;
+=> nrel_inclusion: concept_sc_code;;

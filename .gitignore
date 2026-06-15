@@ -20,3 +20,6 @@ kb.bin
 
 .DS_Store
 knowledge-base/ostis_knowledge/test.scs
+.pids/terminal1.pid
+.pids/terminal2.pid
+.pids/terminal3.pid
