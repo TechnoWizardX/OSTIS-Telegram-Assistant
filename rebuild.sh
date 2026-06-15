@@ -2,21 +2,13 @@
 
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+pkill -f "kitty.*KB_MACHINE"
+
+sleep 1
+
 kitty --title KB_MACHINE bash -c "
 cd '$PROJECT_DIR'
 ./scripts/start.sh build_kb
 ./scripts/start.sh machine
-exec bash
-" &
-
-kitty --title WEB bash -c "
-cd '$PROJECT_DIR'
-./scripts/start.sh web
-exec bash
-" &
-
-kitty --title INTERFACE bash -c "
-cd '$PROJECT_DIR'
-./scripts/start.sh interface
 exec bash
 " &

@@ -1,0 +1,13 @@
+concept_sc_code
+<- topic_basics_of_formalization;
+=> nrel_main_idtf:
+    [SC-код]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    []
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);;

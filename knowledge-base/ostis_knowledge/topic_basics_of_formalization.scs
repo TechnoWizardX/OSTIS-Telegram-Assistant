@@ -1,0 +1,18 @@
+topic_basics_of_formalization
+<- concept_discipline;
+=> nrel_definition:
+    [Основы формализации на SC-коде - раздел, изучающий элементы и способы для формализации знаний в рамках системы OSTIS]
+    (*
+        <- concept_definition;;
+    *);
+=> nrel_explanation:
+    [Раздел направлен на обучение формализации знаний на SC-коде посредством примеров и разъяснений]
+    (*
+        <- concept_explanation;;
+    *);
+=> nrel_main_idtf:
+    [Основы формализации на SC-коде]
+    (*
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_code;;
