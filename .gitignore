@@ -19,3 +19,4 @@ kb.bin
 *.json
 
 .DS_Store
+knowledge-base/ostis_knowledge/test.scs
