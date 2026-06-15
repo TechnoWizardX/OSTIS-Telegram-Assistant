@@ -177,7 +177,7 @@ concept_sc_idtf
                 <- lang_ru;;
                 *);;
                 <- concept;;
-    *);;
+    *);
 => nrel_inclusion:
     sc_idtf_system
     (*
@@ -222,7 +222,7 @@ concept_sc_idtf
                 <- lang_ru;;
                 *);;
                 <- concept;;
-    *);;
+    *);
 =>nrel_inclusion:
     system_sc_id
     (*
