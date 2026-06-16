@@ -1,3 +1,29 @@
+concept_sc_code_topic
+<- concept_discipline_topic;
+=> nrel_key_concepts: {
+    concept_sc_code;
+    concept_basic_concepts;
+    sc_element;
+    sc_construction;
+    sc_set;
+    sc_structure;
+    sc_text;
+    sc_knowledge;
+    sc_file;
+    sc_idtf;
+    main_sc_idtf
+};
+=> nrel_explanation:
+    [Тема посвящена основным понятиям и структурам, используемым для формализации знаний в SC-коде. Рассматриваются базовые элементы SC-кода, такие как sc-элементы, sc-конструкции и sc-множества, а также более сложные структуры, включая sc-структуры и sc-тексты. Особое внимание уделяется sc-знаниям, которые представляют собой формализованную информацию, и sc-файлам, используемым для хранения данных. Также обсуждаются sc-идентификаторы и их роль в обеспечении однозначной идентификации элементов SC-кода.]
+    (*
+        <- concept_explanation;;
+    *);
+=> nrel_main_idtf:
+    [Основные понятия SC-кода]
+    (*
+        <- lang_ru;;
+    *);;
+    
 concept_sc_code
 <- sc_node_class;
 <- concept;
@@ -21,7 +47,7 @@ concept_sc_code
 
 concept_basic_concepts
 <- sc_node_class;
-<= nrel_inclusion: concept_sc_code;
+<= nrel_inclusion: concept_sc_code_topic;
 => nrel_main_idtf:
     [Основные понятия SC-кода]
     (*
