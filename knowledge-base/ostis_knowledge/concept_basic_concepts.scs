@@ -1,4 +1,4 @@
-concept_sc_code_topic
+sc_code_topic
 <- concept_discipline_topic;
 => nrel_main_idtf:
     [Основные понятия SC-кода]
@@ -18,5 +18,235 @@ concept_sc_code_topic
     sc_text;
     sc_knowledge;
     sc_file;
-    sc_idtf
-};;
+    sc_idtf;
+    main_sc_idtf
+};
+=> nrel_explanation:
+    [Тема посвящена основным понятиям и структурам, используемым для формализации знаний в SC-коде. Рассматриваются базовые элементы SC-кода, такие как sc-элементы, sc-конструкции и sc-множества, а также более сложные структуры, включая sc-структуры и sc-тексты. Особое внимание уделяется sc-знаниям, которые представляют собой формализованную информацию, и sc-файлам, используемым для хранения данных. Также обсуждаются sc-идентификаторы и их роль в обеспечении однозначной идентификации элементов SC-кода.]
+    (*
+        <- concept_explanation;;
+    *);
+=> nrel_main_idtf:
+    [Основные понятия SC-кода]
+    (*
+        <- lang_ru;;
+    *);;
+
+concept_sc_code
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [SC-код]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [SC-код (Semantic Computer Code) — это универсальный формальный язык унифицированного смыслового представления знаний в памяти ostis-систем.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [SC-код используется для формализации знаний в ostis-системах, обеспечивая единый способ представления информации и ее взаимосвязей.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);;
+
+concept_basic_concepts
+<- sc_node_class;
+<= nrel_inclusion: sc_code_topic;
+=> nrel_main_idtf:
+    [Основные понятия SC-кода]
+    (*
+        <- lang_ru;;
+    *);;
+
+sc_element
+<= nrel_inclusion: concept_basic_concepts;
+<- concept;
+=> nrel_main_idtf:
+    [sc-элемент]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-элемент — это атомарная единица SC-кода, являющаяся обозначением множества, представимого в SC-коде.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Каждый sc-элемент является обозначением соответствующего множества и используется для построения сложных конструкций знаний.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);;
+
+sc_construction
+<= nrel_inclusion: concept_basic_concepts;
+<- concept;
+=> nrel_main_idtf:
+    [sc-конструкция]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-конструкция — это знаковая конструкция, принадлежащая SC-коду.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [sc-конструкция представляет собой формальную синтаксическую единицу SC-кода для описания знаний и их структуры.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);;
+
+sc_set
+<= nrel_inclusion: concept_basic_concepts;
+<- concept;
+=> nrel_main_idtf:
+    [sc-множество]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-множество — это множество sc-элементов, которые объединяются в различные структуры.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [sc-множество является базовой структурой SC-кода, содержащей sc-элементы, sc-связки, sc-классы и sc-структуры.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);;
+
+sc_structure
+<= nrel_inclusion: concept_basic_concepts;
+<- concept;
+=> nrel_main_idtf:
+    [sc-структура]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-структура — это sc-множество, содержащее связки между элементами этого множества.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [sc-структура описывает взаимосвязи между элементами, образуя семантически значимое объединение узлов и связей.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);;
+
+sc_text
+<= nrel_inclusion: concept_basic_concepts;
+<- concept;
+=> nrel_main_idtf:
+    [sc-текст]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-текст — это связная sc-структура, являющаяся семантически корректной в рамках SC-кода.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [sc-текст представляет собой целостное знание, описанное в виде связной структуры SC-кода и соответствующее правилам формальной модели.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);;
+
+sc_knowledge
+<= nrel_inclusion: concept_basic_concepts;
+<- concept;
+=> nrel_main_idtf:
+    [sc-знание]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-знание — это sc-текст, обладающий свойствами знания.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [sc-знание — это формализованная информация, представленная SC-кодом и готовая к использованию в ostis-системе.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);;
+
+sc_file
+<= nrel_inclusion: concept_basic_concepts;
+<- concept;
+=> nrel_main_idtf:
+    [файл]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [файл — информационная конструкция, не являющаяся sc-конструкцией, которая может храниться в файловой памяти ostis-системы.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Файл является внешней сущностью для хранения данных, не представленных непосредственно в виде SC-кода.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);;
+
+sc_idtf
+<= nrel_inclusion: concept_basic_concepts;
+<- concept;
+=> nrel_main_idtf:
+    [sc-идентификатор]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-идентификатор — файл, являющийся внешним идентификатором (именем) sc-элемента, хранимого в памяти ostis-системы.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [sc-идентификатор связывает внешний файл с соответствующим элементом SC-кода, обеспечивая его однозначную идентификацию.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);;
+
+main_sc_idtf
+<= nrel_inclusion: concept_basic_concepts;
+<- concept;
+=> nrel_main_idtf:
+    [основной sc-идентификатор]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [основной sc-идентификатор — sc-идентификатор, который взаимно однозначно соответствует идентифицируемому sc-элементу.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [основной sc-идентификатор является основным именем элемента и используется для однозначной ссылки на него.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);;
