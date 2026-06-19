@@ -1,15 +1,19 @@
 from sc_client.client import (connect, disconnect, is_connected,
                               search_by_template, generate_by_template,
-                              generate_elements, generate_elements_by_scs, search_links_by_contents
+                              generate_elements, generate_elements_by_scs, search_links_by_contents,
+                              create_elementary_event_subscriptions, get_link_content
                             )
 from sc_kpm import ScKeynodes
-from sc_client.models import ScAddr, ScTemplate, ScConstruction, ScLinkContentType, ScLinkContent
+from sc_client.models import ScAddr, ScTemplate, ScConstruction, ScLinkContentType, ScLinkContent, ScEventSubscriptionParams
 from sc_client.constants import sc_type
+from sc_client.constants.common import ScEventType
 from logger import log
+from time import sleep
+from pathlib import Path
 MACHINE_URL = "ws://localhost:8090"
 
 
-def get_user_class(tg_id: str, user_name: str) -> str:
+def get_user_class(tg_id: str, user_name: str) -> tuple[str, ScAddr | None]:
     """
     Проверяет, известен ли пользователь в БZ.
     Возвращает 'concept_student' | 'concept_known_user' | 'concept_unknown_user'
@@ -19,7 +23,7 @@ def get_user_class(tg_id: str, user_name: str) -> str:
         user_name: Имя пользователя (для логирования)
 
     Returns:
-        'concept_student' | 'concept_known_user' | 'concept_unknown_user'
+        'concept_student' | 'concept_user' | 'concept_unknown_user'
     """
     if not is_connected():
         connect(MACHINE_URL)
@@ -30,13 +34,13 @@ def get_user_class(tg_id: str, user_name: str) -> str:
         if user_addr.is_valid():
             if _is_student(user_addr):
                 log(f"User {tg_id} ({user_name}) found as STUDENT", system="SC_HANDLER")
-                return "concept_student"
+                return ("concept_student", user_addr)
             else:
-                log(f"User {tg_id} ({user_name}) found as KNOWN_USER", system="SC_HANDLER")
-                return "concept_user"
+                log(f"User {tg_id} ({user_name}) found as USER", system="SC_HANDLER")
+                return ("concept_user", user_addr)
         else:
             log(f"User {tg_id} ({user_name}) NOT FOUND in KB - treating as UNKNOWN", system="SC_HANDLER")
-            return "concept_unknown_user"
+            return ("concept_unknown_user", None)
 
     except Exception as e:
         log(f"Error checking user: {e}", level="error", system="SC_HANDLER")
@@ -106,13 +110,14 @@ def send_message_to_sc(message: str, tg_id: str, user_name: str) -> None:
         connect(MACHINE_URL)
     construct = ScConstruction()
 
-    user_class = get_user_class(tg_id, user_name)
+    user_info = get_user_class(tg_id, user_name)
+    user_node_addr = user_info[1]
+    user_class = user_info[0]
     log(f"Found user class: {user_class}", system="SC_HANDLER|SEND MESSAGE")
     if user_class == "concept_unknown_user":
         log(f"Registering new user with tg_id {tg_id} and name {user_name}", system="SC_HANDLER|SEND MESSAGE")
         user_node_addr = sign_up_new_user(tg_id, user_name)
     else:
-        user_node_addr = _search_user_by_tg_id(tg_id)
         log(f"Existing user node found: {user_node_addr}", system="SC_HANDLER|SEND MESSAGE")
 
     message_link = ScLinkContent(message, ScLinkContentType.STRING)
@@ -128,6 +133,17 @@ def send_message_to_sc(message: str, tg_id: str, user_name: str) -> None:
         sc_type.VAR_PERM_POS_ARC,
         ScKeynodes["nrel_message_author"]
     )
+    scs = f"""{tg_id}
+=> nrel_user_id: [{tg_id}];
+=> nrel_main_idtf: [{user_name}];
+=> nrel_system_identifier: [{tg_id}];
+<- concept_user;;
+"""
+    dir_path = Path(__file__).parent.parent / "knowledge-base" / "users" / "tgusers" / f"user_{tg_id}.scs"
+
+    print(dir_path)
+    with dir_path.open('w', encoding='utf-8') as f:
+        f.write(scs)
     generate_by_template(template)
 
 def sign_up_new_user(tg_id: str, user_name: str) -> ScAddr:
@@ -175,6 +191,13 @@ def sign_up_new_user(tg_id: str, user_name: str) -> ScAddr:
             sc_type.VAR_PERM_POS_ARC,
             ScKeynodes["nrel_main_idtf"]
         )
+        template.quintuple(
+            user_node_addr,
+            sc_type.VAR_COMMON_ARC,
+            tg_id_link_addr,
+            sc_type.VAR_PERM_POS_ARC,
+            ScKeynodes["nrel_system_identifier"]
+        )
         generate_by_template(template)
 
         return user_node_addr
@@ -182,8 +205,33 @@ def sign_up_new_user(tg_id: str, user_name: str) -> ScAddr:
         log(f"Error signing up new user: {e}", level="error", system="SC_HANDLER|SIGN UP")
         return ScAddr(0)
 
+def subscribe_to_message(message_adder : function) -> list:
 
-    # TODO: Здесь будут созданы ноды в SC-machine
+        reply_to_message = ScKeynodes["nrel_reply_to_message"]
+
+        def on_message_replied(subscribed_addr: ScAddr, arc: ScAddr,
+                               message_to_reply_message_arc_addr: ScAddr):
+            reply_message_alias = "_reply_message"
+
+            template = ScTemplate()
+            template.triple(
+                sc_type.VAR_NODE_LINK >> reply_message_alias,
+                message_to_reply_message_arc_addr,
+                sc_type.VAR_NODE_LINK
+            )
+            result = search_by_template(template)
+            if not result:
+                return
+            reply_message_addr = result[0].get(reply_message_alias)
+            text = get_link_content(reply_message_addr)[0].data
+            message_adder()
+
+        event_params = ScEventSubscriptionParams(reply_to_message,
+                                                    ScEventType.AFTER_GENERATE_OUTGOING_ARC, on_message_replied)
+        return create_elementary_event_subscriptions(event_params)
+
 if __name__ == "__main__":
     connect(MACHINE_URL)
-    send_message_to_sc("Привет, я тестовое сообщение от пользователя!", "7658655979", "TestUser")
+    send_message_to_sc("Привет, я тестовое сообщение от пользователя!", "2009537242", "TestUser")
+    sleep(5)
+    disconnect()

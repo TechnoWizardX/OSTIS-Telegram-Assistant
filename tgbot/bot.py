@@ -10,7 +10,7 @@ from sc_client.client import connect, disconnect, is_connected
 import dotenv
 
 from sc_handler import MACHINE_URL
-from sc_handler import send_message_to_sc
+from sc_handler import send_message_to_sc, subscribe_to_message
 
 dotenv.load_dotenv()
 
@@ -110,6 +110,6 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    #connect(MACHINE_URL)
+    connect(MACHINE_URL)
 
     asyncio.run(main())
