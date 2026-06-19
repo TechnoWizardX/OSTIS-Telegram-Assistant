@@ -1,9 +1,10 @@
 from sc_client.client import (connect, disconnect, is_connected,
                               search_by_template, generate_by_template,
-                              generate_elements, search_links_by_contents)
+                              generate_elements, search_links_by_contents, create_elementary_event_subscriptions, get_link_content)
 from sc_kpm import ScKeynodes
-from sc_client.models import ScAddr, ScTemplate, ScConstruction, ScLinkContentType, ScLinkContent
+from sc_client.models import ScAddr, ScTemplate, ScConstruction, ScLinkContentType, ScLinkContent, ScEventSubscriptionParams
 from sc_client.constants import sc_type
+from sc_client.constants.common import ScEventType
 from logger import log
 from time import sleep
 from pathlib import Path
@@ -205,10 +206,69 @@ def sign_up_new_user(tg_id: str, user_name: str) -> ScAddr:
             system="SC_HANDLER|SIGN UP")
         return ScAddr()
 
+def subscribe_to_message(message_adder = None) -> list:
+        nrel_reply_to_message = "nrel_reply_to_message"
+        nrel_message_author = "nrel_message_author"
+
+        nrel_reply_to_message = ScKeynodes[nrel_reply_to_message]
+
+
+        def on_message_replied(subscribed_addr: ScAddr, arc: ScAddr,
+                               message_to_reply_message_arc_addr: ScAddr):
+            reply_message_alias = "_reply_message"
+            message_alias = "_message"
+            nrel_message_author = ScKeynodes["nrel_message_author"]
+
+            template = ScTemplate()
+            template.triple(
+                sc_type.VAR_NODE_LINK >> reply_message_alias,
+                message_to_reply_message_arc_addr,
+                sc_type.VAR_NODE_LINK >> message_alias
+            )
+            result = search_by_template(template)
+            if not result:
+                return
+            reply_message_addr = result[0].get(reply_message_alias)
+            text = get_link_content(reply_message_addr)[0].data
+            message_addr = result[0].get(message_alias)
+
+            template = ScTemplate()
+            template.quintuple(
+                message_addr,
+                sc_type.VAR_COMMON_ARC,
+                sc_type.VAR_NODE >> "_user",
+                sc_type.VAR_PERM_POS_ARC,
+                nrel_message_author
+            )
+            result = search_by_template(template)
+            if not result:
+                return
+            user_addr = result[0].get("_user")
+            print(text, " \n=======================\n", user_addr)
+            nrel_user_id = ScKeynodes["nrel_user_id"]
+            template = ScTemplate()
+            template.quintuple(
+                user_addr,
+                sc_type.VAR_COMMON_ARC,
+                sc_type.VAR_NODE_LINK >> "_user_id",
+                sc_type.VAR_PERM_POS_ARC,
+                nrel_user_id
+            )
+            result = search_by_template(template)
+            if not result:
+                return
+            user_id = int(get_link_content(result[0].get("_user_id"))[0].data)
+            print(user_id)
+
+        event_params = ScEventSubscriptionParams(nrel_reply_to_message,
+                                                    ScEventType.AFTER_GENERATE_OUTGOING_ARC, on_message_replied)
+        return create_elementary_event_subscriptions(event_params)
+
 
 if __name__ == "__main__":
     connect(MACHINE_URL)
     log("Connected to SC-machine. Sending test message...", system="SC_HANDLER")
-    send_message_to_sc("Привет, я тестовое сообщение от пользователя!", "3327799189", "TestUser")
+    subscribe_to_message()
+    send_message_to_sc("Что такое", "3327799189", "TestUser")
     sleep(5)
     disconnect()
