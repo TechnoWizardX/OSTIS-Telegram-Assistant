@@ -1,7 +1,5 @@
 import os
 import asyncio
-from sqlite3 import connect
-
 from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
 from aiogram.types import Message
@@ -9,8 +7,7 @@ from sc_client.client import connect, disconnect, is_connected
 
 import dotenv
 
-from sc_handler import MACHINE_URL
-from sc_handler import send_message_to_sc, subscribe_to_message
+from sc_handler import MACHINE_URL, send_message_to_sc
 
 dotenv.load_dotenv()
 
@@ -79,7 +76,7 @@ async def default_message_handler(message: Message) -> None:
 
     Это простой перехватчик, который отвечает пользователю
     """
-    send_message_to_sc(message.text, message.from_user.id, message.from_user.first_name)
+    send_message_to_sc(message.text, str(message.from_user.id), message.from_user.first_name)
     await message.answer(
         f"Сообщение принято. Сейчас это заглушка. TG_ID: {message.from_user.id}, User Name: {message.from_user.first_name}"
     )
@@ -107,6 +104,7 @@ async def main() -> None:
         await dp.start_polling(bot)
     finally:
         await bot.session.close()
+        disconnect()
 
 
 if __name__ == "__main__":
