@@ -6,6 +6,7 @@ cmake-build-*
 /logs
 /install
 /ConanPresets.json
+__pycache__
 
 CMakeCache.txt
 CMakeFiles
@@ -17,9 +18,8 @@ sc-web
 kb.bin
 .env
 *.json
+.venv
 
 .DS_Store
 knowledge-base/ostis_knowledge/test.scs
-.pids/terminal1.pid
-.pids/terminal2.pid
-.pids/terminal3.pid
+*.pid

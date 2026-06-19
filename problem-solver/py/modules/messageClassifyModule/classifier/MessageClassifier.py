@@ -7,6 +7,13 @@ class MessageClassifier:
     и вернуть результат в стандартизированной структуре.
     """
 
+    @staticmethod
+    def _extract_entity(msg_lower: str, message: str, pattern: str) -> str:
+        """Извлекает сущность из сообщения после указанного шаблона и очищает пунктуацию."""
+        idx = msg_lower.index(pattern) + len(pattern)
+        entity = message[idx:].strip()
+        return entity.rstrip(".,!?;:()\"'")
+
     def classify(self, message: str, message_author_class: str, message_history: list[str]) -> tuple[str, dict[str], set[str]]:
         """
         Классифицирует текстовое сообщение, исходя из его содержания и принадлежности отправителя к определённому классу.
@@ -30,26 +37,178 @@ class MessageClassifier:
             3. Системные идентификаторы классов сущностей, извлечённых из контекста сообщения.
         """
         if message_author_class == "concept_student":
-            # Приветственное сообщение
-            if "Привет" in message:
-                return ["concept_student_message_about_greeting", {}, {}]
+            msg_lower = message.lower()
 
-            # Неформальное приветствие
-            if "Как дела" in message:
+            # --- Приветствия (регистронезависимые) ---
+            if any(phrase in msg_lower for phrase in ["привет", "здравствуй", "добрый день", "доброе утро", "добрый вечер"]):
+                return ["concept_student_message_about_greeting", {}, {}]
+            if any(phrase in msg_lower for phrase in ["как дела", "как ты", "что нового"]):
                 return ["concept_student_message_about_casual_greeting", {}, {}]
 
-             # Запрос о навыках системы
-            if "Что ты умеешь" in message:
+            # --- Запрос о навыках / помощь ---
+            if any(phrase in msg_lower for phrase in ["что ты умеешь", "твои навыки", "какие у тебя навыки", "что ты можешь"]):
                 return ["concept_student_message_about_searching_my_skills", {}, {}]
-
-            # Запрос о помощи
-            if "Мне нужна помощь" in message:
+            if any(phrase in msg_lower for phrase in ["мне нужна помощь", "помоги мне"]):
                 return ["concept_student_message_about_help", {}, {}]
 
-            # Запрос определения понятия
-            if "Что такое" in message:
-                entity = message.split("Что такое")[1].strip()
-                entity_class = "concept"
-                return ["concept_student_message_about_searching_concept_information", {entity_class: entity}, {}]
+            # --- Запросы про понятия (самые специфичные — содержат слово "понятие") ---
+            # Должны быть ДО discipline_detail и topic_detail, чтобы "расскажи про понятие X"
+            # не перехватилось общим "расскажи про " или "расскажи подробнее про "
+            concept_specific_patterns = [
+                ("расскажи про понятие ", "concept"),
+                ("расскажи о понятии ", "concept"),
+                ("объясни понятие ", "concept"),
+                ("что ты знаешь про понятие ", "concept"),
+                ("что ты знаешь о понятии ", "concept"),
+            ]
+            for pattern, entity_class in concept_specific_patterns:
+                if pattern in msg_lower:
+                    entity = self._extract_entity(msg_lower, message, pattern)
+                    if entity:
+                        return ["concept_student_message_about_searching_concept_information", {entity_class: entity}, {}]
+                    return ["concept_student_message_about_searching_concept_information", {}, {}]
+
+            # --- Запрос подробной информации по дисциплине (ДО topic_detail — чтобы "расскажи про дисциплину X"
+            # не перехватилось общим "расскажи про ") ---
+            discipline_detail_patterns = [
+                ("расскажи подробнее про ", "concept_discipline"),
+                ("расскажи подробнее о ", "concept_discipline"),
+                ("подробнее про ", "concept_discipline"),
+                ("подробнее о ", "concept_discipline"),
+                ("что ты знаешь про дисциплину ", "concept_discipline"),
+                ("что ты знаешь о дисциплине ", "concept_discipline"),
+                ("что надо делать по дисциплине ", "concept_discipline"),
+                ("что можешь рассказать про дисциплину ", "concept_discipline"),
+                ("что можешь рассказать о дисциплине ", "concept_discipline"),
+                ("пришли информацию по дисциплине ", "concept_discipline"),
+                ("пришли инфу по дисциплине ", "concept_discipline"),
+                ("информацию по дисциплине ", "concept_discipline"),
+                ("расскажи про дисциплину ", "concept_discipline"),
+                ("расскажи о дисциплине ", "concept_discipline"),
+                ("расскажи про предмет ", "concept_discipline"),
+                ("расскажи о предмете ", "concept_discipline"),
+            ]
+            for pattern, entity_class in discipline_detail_patterns:
+                if pattern in msg_lower:
+                    entity = self._extract_entity(msg_lower, message, pattern)
+                    if entity:
+                        return ["concept_student_message_about_searching_discipline_information", {entity_class: entity}, {}]
+                    return ["concept_student_message_about_searching_discipline_information", {}, {}]
+
+            # --- Запрос информации по теме дисциплины ---
+            # Сначала специфичные с "тему"/"теме", потом общее "расскажи про "
+            topic_detail_patterns = [
+                ("расскажи подробнее про тему ", "concept_discipline_topic"),
+                ("расскажи подробнее о теме ", "concept_discipline_topic"),
+                ("расскажи про тему ", "concept_discipline_topic"),
+                ("расскажи о теме ", "concept_discipline_topic"),
+                ("что ты знаешь по теме ", "concept_discipline_topic"),
+                ("что ты знаешь о теме ", "concept_discipline_topic"),
+                ("подробнее по теме ", "concept_discipline_topic"),
+                ("подробнее о теме ", "concept_discipline_topic"),
+                ("пришли информацию по теме ", "concept_discipline_topic"),
+                ("пришли инфу по теме ", "concept_discipline_topic"),
+                ("информацию по теме ", "concept_discipline_topic"),
+                ("инфу по теме ", "concept_discipline_topic"),
+                # Общий паттерн — перехватывает "расскажи про [название_темы]"
+                ("расскажи про ", "concept_discipline_topic"),
+            ]
+            for pattern, entity_class in topic_detail_patterns:
+                if pattern in msg_lower:
+                    entity = self._extract_entity(msg_lower, message, pattern)
+                    if entity:
+                        return ["concept_student_message_about_searching_discipline_topic_information", {entity_class: entity}, {}]
+                    return ["concept_student_message_about_searching_discipline_topic_information", {}, {}]
+
+            # --- Запрос перечня тем по дисциплине ---
+            discipline_topics_patterns = [
+                ("какие темы есть по ", "concept_discipline"),
+                ("какие темы по дисциплине ", "concept_discipline"),
+                ("какие разделы есть по ", "concept_discipline"),
+                ("какие разделы по дисциплине ", "concept_discipline"),
+                ("перечисли темы по ", "concept_discipline"),
+                ("перечисли разделы по ", "concept_discipline"),
+                ("пришли перечень тем по дисциплине ", "concept_discipline"),
+                ("пришли темы по ", "concept_discipline"),
+                ("темы по дисциплине ", "concept_discipline"),
+                ("разделы по дисциплине ", "concept_discipline"),
+                ("список тем по ", "concept_discipline"),
+                ("список разделов по ", "concept_discipline"),
+            ]
+            for pattern, entity_class in discipline_topics_patterns:
+                if pattern in msg_lower:
+                    entity = self._extract_entity(msg_lower, message, pattern)
+                    if entity:
+                        return ["concept_student_message_about_searching_discipline_topics", {entity_class: entity}, {}]
+                    return ["concept_student_message_about_searching_discipline_topics", {}, {}]
+
+            # --- Запрос всех дисциплин / тем (после более специфичных шаблонов с извлечением) ---
+            if any(phrase in msg_lower for phrase in [
+                "какие темы ты знаешь",
+                "какие темы есть",
+                "какие у тебя есть темы",
+                "какие разделы ты знаешь",
+                "какие разделы есть",
+                "расскажи про свои темы",
+                "расскажи про свои разделы",
+                "что ты знаешь по темам",
+                "что ты знаешь по разделам",
+                "перечень всех тем",
+                "перечень всех разделов",
+                "список всех тем",
+                "список всех разделов",
+                "все темы",
+                "все разделы",
+                "скинь все темы",
+                "перечисли темы",
+                "перечисли разделы",
+            ]):
+                return ["concept_student_message_about_searching_all_topics", {}, {}]
+
+            if any(phrase in msg_lower for phrase in [
+                "какие дисциплины",
+                "какие дисциплины изучаем",
+                "какие дисциплины изучаю",
+                "какие дисциплины доступны",
+                "какие предметы",
+                "какие предметы изучаю",
+                "какие предметы есть",
+                "какие курсы",
+                "список дисциплин",
+                "список предметов",
+                "перечень дисциплин",
+                "перечень предметов",
+            ]):
+                return ["concept_student_message_about_searching_studied_disciplines", {}, {}]
+
+            # --- Запрос понятий (регистронезависимый, самый общий — в конце) ---
+            what_is_patterns = [
+                "что такое ",
+                "что это ",
+                "что значит ",
+                "что означает ",
+                "кто такой ",
+                "кто такие ",
+                "какое определение у ",
+                "какое определение имеет ",
+                "дай определение ",
+                "дайте определение ",
+                "определение понятия ",
+                "что ты знаешь про понятие ",
+                "что ты знаешь о понятии ",
+                "объясни понятие ",
+                "объясни ",
+                "расскажи про понятие ",
+                "расскажи о понятии ",
+                "как понять ",
+                "что ты знаешь про ",
+                "что ты знаешь о ",
+            ]
+            for pattern in what_is_patterns:
+                if pattern in msg_lower:
+                    entity = self._extract_entity(msg_lower, message, pattern)
+                    if entity:
+                        return ["concept_student_message_about_searching_concept_information", {"concept": entity}, {}]
+                    return ["concept_student_message_about_searching_concept_information", {}, {}]
 
         return ["concept_unknown_message", {}, {}]

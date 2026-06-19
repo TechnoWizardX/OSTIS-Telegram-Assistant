@@ -24,6 +24,9 @@ from sc_kpm import ScKeynodes
 
 
 from .classifier.MessageClassifier import MessageClassifier
+from sc_kpm.utils.action_utils import generate_action
+from sc_kpm.utils import generate_role_relation
+from sc_kpm import ScKeynodes
 
 
 logging.basicConfig(
@@ -57,6 +60,29 @@ class MessageClassifyAgent(ScAgentClassic):
         )
         
         generate_non_role_relation(action_addr, result_addr, ScKeynodes["nrel_result"])
+        # Если запрос связан с темами/дисциплинами/понятиями — запускаем TopicInfoAgent
+        message_topic_class = classification_result[0]
+        if message_topic_class in [
+            "concept_student_message_about_searching_all_topics",
+            "concept_student_message_about_searching_discipline_topic_information",
+            "concept_student_message_about_searching_discipline_topics",
+            "concept_student_message_about_searching_discipline_information",
+            "concept_student_message_about_searching_concept_information",
+            "concept_unknown_message",  # Тоже пробуем — может быть названием темы/понятия
+        ]:
+            try:
+                topic_action_node = generate_action("message_topic_info_action")
+                generate_role_relation(
+                    topic_action_node,
+                    arc_to_message_addr,
+                    ScKeynodes.rrel_index(1),
+                )
+                self.logger.info(
+                    f"MessageClassifyAgent: Triggered TopicInfoAgent for {message_topic_class}"
+                )
+            except Exception as e:
+                self.logger.error(f"MessageClassifyAgent: Failed to trigger TopicInfoAgent: {e}")
+
         finish_action_with_status(action_addr, is_success=True)
         
         return ScResult.OK

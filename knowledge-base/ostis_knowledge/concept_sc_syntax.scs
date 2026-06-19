@@ -1,0 +1,501 @@
+concept_sc_syntax
+<- concept_discipline_topic;
+=> nrel_main_idtf:
+    [Синтаксис SC-кода]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Синтаксис SC-кода определяет правила построения корректных конструкций на языке SC-кода, включая алфавит, классификацию элементов и формы внешнего представления (SCg, SCs, SCn).]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Синтаксис SC-кода, то есть синтаксическая структура линейных информационных конструкций (строк символов) на SC-коде, задаётся:
+    1) Алфавитом Ядра SC-кода (или алфавитом используемых символов — элементарных, атомарных фрагментов информационных конструкций), то есть семейством таких попарно непересекающихся классов синтаксически эквивалентных символов, для которых существует простая процедура, позволяющая для любого символа по его синтаксическим особенностям установить факт его принадлежности одному из указанных классов;
+    2) Двумя бинарными ориентированными отношениями инцидентности sc-элементов, заданными на множестве всех sc-элементов: отношением инцидентности обозначений sc-пар с их элементами и отношением инцидентности обозначений ориентированных sc-пар с их вторыми элементами, которое является подмножеством первого отношения инцидентности.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_key_concepts: {
+    concept_sc_alphabet;
+    concept_sc_element_classification;
+    concept_sc_node;
+    concept_sc_connector;
+    concept_sc_edge;
+    concept_sc_arc;
+    concept_sc_external_representation
+};
+<= nrel_inclusion: sc_syntax_topic;;
+
+concept_sc_alphabet
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [Алфавит Ядра SC-кода]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Алфавит Ядра SC-кода — это семейство классов синтаксически эквивалентных sc-элементов, в каждый из которых входят sc-элементы с одинаковыми синтаксическими характеристиками или, условно говоря, с одинаковыми наборами синтаксических меток.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Алфавит Ядра SC-кода включает следующие классы: sc-узлы, не являющиеся знаками файлов; sc-узлы, являющиеся знаками файлов; sc-рёбра; sc-дуги общего вида; sc-дуги основного вида (принадлежности).]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_syntax;;
+
+
+concept_sc_element_classification
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [Синтаксическая классификация sc-элементов]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Синтаксическая классификация sc-элементов — это классификация sc-элементов по синтаксическому признаку, представленная иерархией классов sc-узлов и sc-коннекторов с их разновидностями.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_syntax;;
+
+sc_element
+<= nrel_inclusion: concept_sc_element_classification;;
+
+concept_sc_node
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [sc-узел]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-узел — это класс sc-элементов, представляющих собой узлы SC-кода (обозначения множеств).]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: sc_element;;
+
+concept_sc_node_nonfile
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [sc-узел, не являющийся знаком файла]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Класс sc-элементов, представляющих собой sc-узлы, которые не являются знаками файлов.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_alphabet;
+<= nrel_inclusion: concept_sc_node;;
+
+concept_sc_node_constant
+<- sc_node_class;
+=> nrel_main_idtf:
+    [константный sc-узел]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Константный sc-узел — это sc-узел, являющийся обозначением sc-константы.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_node;;
+
+concept_sc_node_variable
+<- sc_node_class;
+=> nrel_main_idtf:
+    [переменный sc-узел]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Переменный sc-узел — это sc-узел, являющийся обозначением sc-переменной.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_node;;
+
+concept_sc_node_file_sign
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [sc-узел, являющийся знаком файла]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Класс sc-элементов, представляющих собой sc-узлы, которые являются знаками файлов.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_alphabet;
+<= nrel_inclusion: concept_sc_node;;
+
+concept_sc_node_file_sign_constant
+<- sc_node_class;
+=> nrel_main_idtf:
+    [константный sc-узел, являющийся знаком файла]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Константный sc-узел, являющийся знаком файла — это sc-узел, являющийся обозначением константного файла.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_node_file_sign;;
+
+concept_sc_node_file_sign_variable
+<- sc_node_class;
+=> nrel_main_idtf:
+    [переменный sc-узел, являющийся знаком файла]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Переменный sc-узел, являющийся знаком файла — это sc-узел, являющийся обозначением переменного файла.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_node_file_sign;;
+
+
+
+concept_sc_connector
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [sc-коннектор]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-коннектор — это класс sc-элементов, представляющих собой обозначения sc-пар (связок между sc-элементами).]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: sc_element;;
+
+concept_sc_edge
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [sc-ребро]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-ребро (неориентированный sc-коннектор) — это класс sc-элементов, представляющих собой неориентированные связки между sc-элементами, являющиеся обозначениями неориентированных sc-пар.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_alphabet;
+<= nrel_inclusion: concept_sc_connector;;
+
+concept_sc_edge_constant
+<- sc_node_class;
+=> nrel_main_idtf:
+    [константное sc-ребро]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Константное sc-ребро — это sc-ребро, являющееся обозначением константной неориентированной sc-пары.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_edge;;
+
+concept_sc_edge_variable
+<- sc_node_class;
+=> nrel_main_idtf:
+    [переменное sc-ребро]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Переменное sc-ребро — это sc-ребро, являющееся обозначением переменной неориентированной sc-пары.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_edge;;
+
+concept_sc_arc
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [sc-дуга]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-дуга (ориентированный sc-коннектор) — это класс sc-элементов, представляющих собой ориентированные связки между sc-элементами, являющиеся обозначениями ориентированных sc-пар.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_connector;;
+
+
+concept_sc_arc_general
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [sc-дуга общего вида]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-дуга общего вида — это класс sc-элементов, представляющих собой sc-дуги, являющиеся обозначениями ориентированных sc-пар, не являющихся sc-парами принадлежности.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_alphabet;
+<= nrel_inclusion: concept_sc_arc;;
+
+concept_sc_arc_general_constant
+<- sc_node_class;
+=> nrel_main_idtf:
+    [константная sc-дуга общего вида]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Константная sc-дуга общего вида — это sc-дуга общего вида, являющаяся обозначением константной ориентированной sc-пары, не являющейся sc-парой принадлежности.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_arc_general;;
+
+concept_sc_arc_general_variable
+<- sc_node_class;
+=> nrel_main_idtf:
+    [переменная sc-дуга общего вида]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Переменная sc-дуга общего вида — это sc-дуга общего вида, являющаяся обозначением переменной ориентированной sc-пары, не являющейся sc-парой принадлежности.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_arc_general;;
+
+
+concept_sc_arc_main
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [sc-дуга основного вида (принадлежности)]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-дуга основного вида (sc-дуга принадлежности) — это класс sc-элементов, представляющих собой sc-дуги, выражающие отношение принадлежности между sc-элементами, являющиеся обозначениями sc-пар принадлежности.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_alphabet;
+<= nrel_inclusion: concept_sc_arc;;
+
+concept_sc_arc_main_constant
+<- sc_node_class;
+=> nrel_main_idtf:
+    [константная sc-дуга принадлежности]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Константная sc-дуга принадлежности — это sc-дуга основного вида, являющаяся обозначением константной sc-пары принадлежности.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_arc_main;;
+
+concept_sc_arc_main_variable
+<- sc_node_class;
+=> nrel_main_idtf:
+    [переменная sc-дуга принадлежности]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Переменная sc-дуга принадлежности — это sc-дуга основного вида, являющаяся обозначением переменной sc-пары принадлежности.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_arc_main;;
+
+
+concept_sc_arc_permanent
+<- sc_node_class;
+=> nrel_main_idtf:
+    [sc-дуга постоянной принадлежности]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-дуга постоянной принадлежности — это sc-дуга основного вида, являющаяся обозначением sc-пары постоянной принадлежности.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_arc_main;;
+
+concept_sc_arc_temporal
+<- sc_node_class;
+=> nrel_main_idtf:
+    [sc-дуга временной (темпоральной) принадлежности]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-дуга временной принадлежности — это sc-дуга основного вида, являющаяся обозначением sc-пары временной принадлежности.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_arc_main;;
+
+concept_sc_arc_temporal_actual
+<- sc_node_class;
+=> nrel_main_idtf:
+    [sc-дуга актуальной временной принадлежности]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-дуга актуальной временной принадлежности — это sc-дуга временной принадлежности, являющаяся обозначением sc-пары актуальной временной принадлежности.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_arc_temporal;;
+
+concept_sc_arc_temporal_nonactual
+<- sc_node_class;
+=> nrel_main_idtf:
+    [sc-дуга неактуальной временной принадлежности]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-дуга неактуальной временной принадлежности — это sc-дуга временной принадлежности, являющаяся обозначением sc-пары неактуальной временной принадлежности.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_arc_temporal;;
+
+concept_sc_arc_positive
+<- sc_node_class;
+=> nrel_main_idtf:
+    [sc-дуга позитивной принадлежности]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-дуга позитивной принадлежности — это sc-дуга основного вида, являющаяся обозначением sc-пары позитивной принадлежности.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_arc_main;;
+
+concept_sc_arc_negative
+<- sc_node_class;
+=> nrel_main_idtf:
+    [sc-дуга негативной принадлежности]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-дуга негативной принадлежности — это sc-дуга основного вида, являющаяся обозначением sc-пары негативной принадлежности.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_arc_main;;
+
+concept_sc_arc_fuzzy
+<- sc_node_class;
+=> nrel_main_idtf:
+    [sc-дуга нечёткой принадлежности]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-дуга нечёткой принадлежности — это sc-дуга основного вида, являющаяся обозначением sc-пары нечёткой принадлежности.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_arc_main;;
+
+
+nrel_incidence
+<- sc_node_non_role_relation;
+<- concept_non_role_relation;
+<- concept_binary_relation;
+=> nrel_main_idtf:
+    [отношение инцидентности обозначений sc-пар с их элементами]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Бинарное ориентированное отношение инцидентности, заданное на множестве всех sc-элементов, связывающее обозначения sc-пар с их элементами. Является первым из двух отношений инцидентности, определяющих синтаксис SC-кода.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_syntax;;
+
+nrel_incidence_second
+<- sc_node_non_role_relation;
+<- concept_non_role_relation;
+<- concept_binary_relation;
+=> nrel_main_idtf:
+    [отношение инцидентности обозначений ориентированных sc-пар с их вторыми элементами]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Бинарное ориентированное отношение инцидентности, являющееся подмножеством отношения инцидентности обозначений sc-пар с их элементами, связывающее обозначения ориентированных sc-пар с их вторыми элементами. Является вторым из двух отношений инцидентности, определяющих синтаксис SC-кода.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_syntax;;

@@ -21,7 +21,7 @@ nrel_main_idtf
 <- concept_non_role_relation;
 <- concept_binary_relation;
 => nrel_main_idtf:
-    [основной идентификатор*]
+    [основной идентификатор]
     (*
         <- lang_ru;;
     *);;
@@ -31,7 +31,7 @@ nrel_inclusion
 <- concept_non_role_relation;
 <- concept_binary_relation;
 => nrel_main_idtf:
-    [включение*]
+    [включение]
     (*
         <- lang_ru;;
     *);;
@@ -41,7 +41,7 @@ nrel_idtf
 <- concept_non_role_relation;
 <- concept_binary_relation;
 => nrel_main_idtf:
-    [идентификатор*]
+    [идентификатор]
     (*
         <- lang_ru;;
     *);;
@@ -51,7 +51,7 @@ nrel_full_name
 <- concept_non_role_relation;
 <- concept_binary_relation;
 => nrel_main_idtf:
-    [полное название*]
+    [полное название]
     (*
         <- lang_ru;;
     *);;
@@ -61,7 +61,7 @@ nrel_abbreviation
 <- concept_non_role_relation;
 <- concept_binary_relation;
 => nrel_main_idtf:
-    [аббревиатура*]
+    [аббревиатура]
     (*
         <- lang_ru;;
     *);;
@@ -71,7 +71,7 @@ nrel_definition
 <- concept_non_role_relation;
 <- concept_binary_relation;
 => nrel_main_idtf:
-    [определение*]
+    [определение]
     (*
         <- lang_ru;;
     *);;
@@ -92,7 +92,7 @@ nrel_explanation
 <- concept_non_role_relation;
 <- concept_binary_relation;
 => nrel_main_idtf:
-    [пояснение*]
+    [пояснение]
     (*
         <- lang_ru;;
     *);;
@@ -102,7 +102,7 @@ nrel_simple_explanation
 <- concept_non_role_relation;
 <- concept_binary_relation;
 => nrel_main_idtf:
-    [простое пояснение*]
+    [простое пояснение]
     (*
         <- lang_ru;;
     *);;
@@ -123,7 +123,7 @@ nrel_note
 <- concept_non_role_relation;
 <- concept_binary_relation;
 => nrel_main_idtf:
-    [примечание*]
+    [примечание]
     (*
         <- lang_ru;;
     *);;
@@ -144,7 +144,7 @@ nrel_purpose
 <- concept_non_role_relation;
 <- concept_binary_relation;
 => nrel_main_idtf:
-    [цель*]
+    [цель]
     (*
         <- lang_ru;;
     *);;
@@ -165,7 +165,7 @@ nrel_stages
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [стадии*]
+    [стадии]
     (*
         <- lang_ru;;
     *);;
@@ -175,7 +175,7 @@ nrel_rules
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [правила*]
+    [правила]
     (*
         <- lang_ru;;
     *);;
@@ -185,7 +185,7 @@ nrel_principles
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [принципы*]
+    [принципы]
     (*
         <- lang_ru;;
     *);;
@@ -206,7 +206,7 @@ nrel_example
 <- concept_non_role_relation;
 <- concept_binary_relation;
 => nrel_main_idtf:
-    [пример*]
+    [пример]
     (*
         <- lang_ru;;
     *);;
@@ -225,7 +225,7 @@ nrel_materials
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [полезные материалы*]
+    [полезные материалы]
     (*
         <- lang_ru;;
     *);;
@@ -235,7 +235,7 @@ nrel_decomposition
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [декомпозиция*]
+    [декомпозиция]
     (*
         <- lang_ru;;
     *);;
@@ -245,7 +245,7 @@ nrel_subdividing
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [разбиение*]
+    [разбиение]
     (*
         <- lang_ru;;
     *);;
@@ -255,7 +255,7 @@ nrel_structure
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [структура*]
+    [структура]
     (*
         <- lang_ru;;
     *);;
@@ -265,7 +265,7 @@ nrel_related_concepts
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [связанные понятия*]
+    [связанные понятия]
     (*
         <- lang_ru;;
     *);;
@@ -275,7 +275,7 @@ nrel_key_concepts
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [ключевые понятия*]
+    [ключевые понятия]
     (*
         <- lang_ru;;
     *);;
@@ -285,7 +285,7 @@ nrel_key_questions
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [рассматриваемые вопросы*]
+    [рассматриваемые вопросы]
     (*
         <- lang_ru;;
     *);;
@@ -295,7 +295,7 @@ nrel_usage_cases
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [примеры использования*]
+    [примеры использования]
     (*
         <- lang_ru;;
     *);;
@@ -305,7 +305,7 @@ nrel_implementation_tools
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [средства реализации*]
+    [средства реализации]
     (*
         <- lang_ru;;
     *);;
@@ -315,7 +315,7 @@ nrel_characteristics
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [характеристики*]
+    [характеристики]
     (*
         <- lang_ru;;
     *);;
@@ -325,7 +325,7 @@ nrel_components
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [компоненты*]
+    [компоненты]
     (*
         <- lang_ru;;
     *);;
@@ -335,7 +335,7 @@ nrel_products
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [продукты*]
+    [продукты]
     (*
         <- lang_ru;;
     *);;
@@ -345,7 +345,7 @@ nrel_advantages
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [преимущества*]
+    [преимущества]
     (*
         <- lang_ru;;
     *);;
@@ -355,7 +355,17 @@ nrel_disadvantages
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [недостатки*]
+    [недостатки]
+    (*
+        <- lang_ru;;
+    *);;
+
+    nrel_specification
+<- sc_node_non_role_relation;
+<- concept_non_role_relation;
+<- concept_quasibinary_relation;
+=> nrel_main_idtf:
+    [уточнение]
     (*
         <- lang_ru;;
     *);;
@@ -365,7 +375,7 @@ nrel_application_areas
 <- concept_non_role_relation;
 <- concept_quasibinary_relation;
 => nrel_main_idtf:
-    [сферы применения*]
+    [сферы применения]
     (*
         <- lang_ru;;
     *);;

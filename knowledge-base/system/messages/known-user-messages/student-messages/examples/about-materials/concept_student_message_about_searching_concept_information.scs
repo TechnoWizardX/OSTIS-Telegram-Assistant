@@ -8,9 +8,11 @@
 
 ---
 #foreach
-<b>#capitalize_first_letter(#normalize(${2})):</b>
+<b>${2}:</b>
+#foreach#cwf
 ${3}
 #endfor#cwf
+#endfor
 ---
 
 Надеюсь, это помогло разобраться в теме! 😊
@@ -81,9 +83,11 @@ ${3}
 
 ---
 #foreach
-<b>#capitalize_first_letter(#normalize(${2})):</b>
+<b>${2}:</b>
+#foreach#cwf
 ${3}
 #endfor#cwf
+#endfor
 
 ---
 🤔 Хочешь узнать больше примеров по этой теме?];;
@@ -153,7 +157,7 @@ ${3}
 ${concept_definition}
 
 ---
-🤔 Если хочешь, чтобы я поделился примерами, — просто напиши!];;
+🤔 Если хочешь узнать больше — напиши "расскажи подробнее".];;
 
 @if_concept_definition_found_production = {
     rrel_condition_template: {
@@ -201,7 +205,18 @@ ${concept_definition}
         }
     } (* <- nrel_search_template;; *);
     rrel_reply_template: {
-		rrel_message_template: @concept_information_not_found_reply_template
+		rrel_message_template: @concept_information_not_found_reply_template;
+        rrel_message_class: concept_system_reply_message_with_question;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_unknown_message;
+                rrel_context_message_class: concept_student_message_about_searching_concept_information
+            };
+            {
+                rrel_reply_message_class: concept_student_negative_reply_message;
+                rrel_context_message_class: concept_student_message_about_help
+            }
+        }
 	}
 };;
 @if_concept_information_not_found_production <- nrel_reply_production;;

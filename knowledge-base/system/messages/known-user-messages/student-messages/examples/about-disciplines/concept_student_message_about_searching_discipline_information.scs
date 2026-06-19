@@ -12,6 +12,8 @@ ${concept_explanation}
 
 ${concept_purpose}
 
+
+
 🤔 Хочешь узнать подробнее?];;
 
 @if_discipline_information_found_production = {
@@ -64,7 +66,18 @@ ${concept_purpose}
         }
     } (* <- nrel_search_template;; *);
     rrel_reply_template: {
-		rrel_message_template: @discipline_information_not_found_reply_template
+		rrel_message_template: @discipline_information_not_found_reply_template;
+        rrel_message_class: concept_system_reply_message_with_question;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_unknown_message;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            };
+            {
+                rrel_reply_message_class: concept_student_negative_reply_message;
+                rrel_context_message_class: concept_student_message_about_help
+            }
+        }
 	}
 };;
 @if_discipline_information_not_found_production <- nrel_reply_production;;
@@ -133,6 +146,10 @@ concept_student_message_about_searching_discipline_information
     что ты знаешь о дисциплине;
     пришли информацию по дисциплине;
     что надо делать по дисциплине;
+    расскажи подробнее про;
+    расскажи подробнее о;
+    подробнее про;
+    подробнее о;
 ];
 => nrel_message_patterns: [
 ];

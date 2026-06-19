@@ -8,7 +8,7 @@
 
 ---
 #foreach
-<b>#capitalize_first_letter(#normalize(${2})):</b>
+<b>${2}:</b>
 #foreach#cwf
 ${foreach.item.index}) ${3}
 #endfor#cwf
@@ -73,7 +73,43 @@ ${foreach.item.index}) ${3}
 };;
 @if_discipline_topic_information_found_production <- nrel_reply_production;;
 
-// --- Second production: discipline topic information not found
+// --- Second production: topic explanation found (direct nrel_explanation lookup)
+
+@topic_explanation_found_reply_template = [📚 <b>${concept_discipline_topic}</b>:
+
+${concept_explanation}
+
+🤔 Напиши ключевое понятие темы, если хочешь узнать о нём подробнее.];;
+
+@if_topic_explanation_found_production = {
+    rrel_condition_template: {
+        rrel_template: [*
+            @input_param1 = (.._topic <-_ concept_discipline_topic);;
+            .._topic _=> nrel_explanation:: .._explanation;;
+            .._explanation <-_ concept_explanation;;
+        *];
+        rrel_template_input_params: {
+            @input_param1
+        }
+    } (* <- nrel_search_template;; *);
+    rrel_reply_template: {
+		rrel_message_template: @topic_explanation_found_reply_template;
+        rrel_message_class: concept_system_reply_message_with_question;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_unknown_message;
+                rrel_context_message_class: concept_student_message_about_searching_concept_information
+            };
+            {
+                rrel_reply_message_class: concept_student_negative_reply_message;
+                rrel_context_message_class: concept_student_message_about_help
+            }
+        }
+	}
+};;
+@if_topic_explanation_found_production <- nrel_reply_production;;
+
+// --- Third production: discipline topic information not found
 
 @discipline_topic_information_not_found_reply_template = [🤔 Хм, интересный запрос! К сожалению, в моей базе знаний <b>мало информации</b> по этой теме. 😔
 
@@ -91,12 +127,72 @@ ${foreach.item.index}) ${3}
         }
     } (* <- nrel_search_template;; *);
     rrel_reply_template: {
-		rrel_message_template: @discipline_topic_information_not_found_reply_template
+		rrel_message_template: @discipline_topic_information_not_found_reply_template;
+        rrel_message_class: concept_system_reply_message_with_question;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_unknown_message;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_topic_information
+            };
+            {
+                rrel_reply_message_class: concept_unknown_message;
+                rrel_context_message_class: concept_student_message_about_searching_concept_information
+            };
+            {
+                rrel_reply_message_class: concept_student_negative_reply_message;
+                rrel_context_message_class: concept_student_message_about_help
+            }
+        }
 	}
 };;
 @if_discipline_topic_information_not_found_production <- nrel_reply_production;;
 
-// --- Third production: discipline topic not found
+// --- Third production: entity is a discipline — fallback to discipline info
+
+@fallback_discipline_reply_template = [📚 Вот информация по дисциплине "<b>${concept_discipline}</b>":
+
+${concept_definition}
+
+${concept_explanation}
+
+${concept_purpose}
+
+
+🤔 Хочешь узнать подробнее?];;
+
+@if_entity_is_discipline_fallback_production = {
+    rrel_condition_template: {
+        rrel_template: [*
+            @input_param1 = (.._discipline <-_ concept_discipline);;
+            .._discipline _=> nrel_definition:: .._definition;;
+            .._definition <-_ concept_definition;;
+            .._discipline _=> nrel_explanation:: .._explanation;;
+            .._explanation <-_ concept_explanation;;
+            .._discipline _=> nrel_purpose:: .._purpose;;
+            .._purpose <-_ concept_purpose;;
+        *];
+        rrel_template_input_params: {
+            @input_param1
+        }
+    } (* <- nrel_search_template;; *);
+    rrel_reply_template: {
+		rrel_message_template: @fallback_discipline_reply_template;
+        rrel_message_class: concept_system_reply_message_with_question;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_positive_reply_message;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_topics
+            };
+            {
+                rrel_reply_message_class: concept_student_negative_reply_message;
+                rrel_context_message_class: concept_student_message_about_help
+            }
+        }
+	}
+};;
+@if_entity_is_discipline_fallback_production <- nrel_reply_production;;
+
+// --- Fourth production: discipline topic not found
 
 @discipline_topic_not_found_reply_template = [🔍 <b>Я не знаю</b> такой темы. 😔
 
@@ -111,7 +207,7 @@ ${foreach.item.index}) ${3}
         rrel_expected_user_reply_message_classes: {
             {
                 rrel_reply_message_class: concept_unknown_message;
-                rrel_context_message_class: concept_student_message_about_searching_discipline_topic_information
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
             };
             {
                 rrel_reply_message_class: concept_student_negative_reply_message;
@@ -152,13 +248,19 @@ concept_student_message_about_searching_discipline_topic_information
     *);
 => nrel_reply_production_chain: <
     @if_discipline_topic_information_found_production;
+    @if_topic_explanation_found_production;
     @if_discipline_topic_information_not_found_production;
+    @if_entity_is_discipline_fallback_production;
     @if_discipline_topic_not_found_production
 >;
 => nrel_message_keywords: [
     пришли информацию по;
     скинь информацию по;
-    что ты знаешь по теме
+    что ты знаешь по теме;
+    расскажи про;
+    расскажи о;
+    что ты знаешь о;
+    что ты знаешьо;
 ];
 => nrel_message_patterns: [
 ];

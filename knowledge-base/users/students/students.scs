@@ -1,6 +1,6 @@
 Ivanov
 => nrel_main_idtf:
-    [Иван]
+    [Глебаня]
     (*
         <- lang_ru;;
     *);
@@ -8,4 +8,4 @@ Ivanov
 <= nrel_known_user:
     myself;
 => nrel_user_id:
-    [tg7658655978];;
+    [tg1009537242];;

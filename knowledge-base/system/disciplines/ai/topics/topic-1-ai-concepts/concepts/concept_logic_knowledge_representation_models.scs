@@ -11,6 +11,11 @@ concept_logic_knowledge_representation_model
     (*
         <- concept_definition;;
     *);
+=> nrel_explanation:
+    [Логические модели используют формальный аппарат математической логики (предикаты, кванторы, связки) для точного и однозначного описания знаний.]
+    (*
+        <- concept_explanation;;
+    *);
 => nrel_example:
     [∀x (Человек(x) → Смертен(x)).]
     (*

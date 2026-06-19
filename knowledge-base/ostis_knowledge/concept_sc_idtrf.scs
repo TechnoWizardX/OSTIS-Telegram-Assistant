@@ -29,7 +29,7 @@ concept_sc_idtf
         <- concept_explanation;;
         <- lang_ru;;
     *);
-=> nrel_rule:
+=> nrel_rules:
     [Каждому sc-элементу в памяти ostis-системы можно дать один или несколько sc-идентификаторов. Но далеко не все sc-элементы должны иметь sc-идентификаторы.]
     (*
         <- concept_rules;;

@@ -32,7 +32,9 @@ concept_student_positive_reply_message
     хочу узнать;
     расскажи;
     покажи;
-    го
+    го;
+    конечно;
+    естественно
 ];
 => nrel_message_patterns: [
 ];;

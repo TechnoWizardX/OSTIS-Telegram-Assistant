@@ -1,8 +1,4 @@
-//////////////////////////////////////
-// Casual greetings
-//////////////////////////////////////
 
-// --- First production: positive greeting
 
 @positive_greeting_reply_template = [${concept_student}, у меня всё отлично! 😊];;
 
@@ -24,7 +20,7 @@
 };;
 @if_system_has_positive_mood_production <- nrel_reply_production;;
 
-// --- Second production: neutral greeting
+
 
 @neutral_greeting_reply_template = [${concept_student}, я рада видеть тебя.];;
 

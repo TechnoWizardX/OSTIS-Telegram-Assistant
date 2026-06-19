@@ -1,0 +1,85 @@
+concept_sc_external_representation
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [Внешнее представление SC-кода]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Для эксплуатации ostis-систем кроме способа абстрактного внутреннего представления баз знаний требуются способы внешнего изображения абстрактных текстов, удобных для пользователей и используемых при оформлении исходных текстов баз знаний и отображения пользователям фрагментов баз знаний по пользовательским запросам. Существуют три формы внешнего представления текстов на SC-коде: SCg-код, SCs-код и SCn-код.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: sc_syntax_topic;;
+
+
+concept_scg_code
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [SCg-код]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_main_idtf:
+    [Semantic Code graphical]
+    (*
+        <- lang_en;;
+    *);
+=> nrel_definition:
+    [SCg-код (Semantic Code graphical) — язык внешнего графического представления конструкций SC-кода. SCg-код является средством разработки исходников баз знаний ostis-систем. Представляет собой способ визуализации sc-текстов в виде рисунков абстрактных конструкций.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Основная цель SCg-кода — иметь четкие синтаксические графические признаки изображения sc.g-элементов (графических обозначений sc-элементов на SCg-коде), позволяющие легко выделить и различать классы sc.g-элементов.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_external_representation;;
+
+concept_scs_code
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [SCs-код]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_main_idtf:
+    [Semantic Code string]
+    (*
+        <- lang_en;;
+    *);
+=> nrel_definition:
+    [SCs-код (Semantic Code string) — язык внешнего линейного (строкового) представления конструкций SC-кода. SCs-код является средством разработки исходников баз знаний ostis-систем. Представляет собой множество линейных текстов (sc.s-текстов), каждый из которых состоит из предложений (sc.s-предложений), разделенных двойной точкой с запятой.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_external_representation;;
+
+concept_scn_code
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [SCn-код]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_main_idtf:
+    [Semantic Code natural]
+    (*
+        <- lang_en;;
+    *);
+=> nrel_definition:
+    [SCn-код (Semantic Code natural) — язык внешнего гипертекстового представления конструкций SC-кода.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+<= nrel_inclusion: concept_sc_external_representation;;

@@ -1,0 +1,20 @@
+sc_knowledge
+<= nrel_inclusion: concept_sc_code_topic;
+<- concept;
+=> nrel_main_idtf:
+    [sc-знание]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [sc-знание — это sc-текст, обладающий свойствами знания.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [sc-знание — это формализованная информация, представленная SC-кодом и готовая к использованию в ostis-системе.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);;

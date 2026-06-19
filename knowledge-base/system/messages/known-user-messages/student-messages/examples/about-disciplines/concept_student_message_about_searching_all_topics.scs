@@ -1,0 +1,104 @@
+//////////////////////////////////////
+// Search all topics (across all disciplines)
+//////////////////////////////////////
+
+// --- First production: disciplines found
+
+@all_topics_found_reply_template = [📚 Я знаю <b>следующие дисциплины</b> 😊:
+
+#foreach
+<b>${concept_discipline}</b>
+    #cwb#endfor
+
+🤔 Напиши название дисциплины (например "ИИ"), чтобы узнать её темы!];;
+
+@if_all_topics_found_production = {
+    rrel_condition_template: {
+        rrel_template: [*
+            @sort_param = (.._discipline <-_ concept_discipline);;
+        *];
+        rrel_sort_param: @sort_param
+    } (* <- nrel_search_set_template;; *);
+    rrel_reply_template: {
+		rrel_message_template: @all_topics_found_reply_template;
+        rrel_message_class: concept_system_reply_message_with_question;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_unknown_message;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            };
+            {
+                rrel_reply_message_class: concept_unknown_message;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_topics
+            };
+            {
+                rrel_reply_message_class: concept_student_negative_reply_message;
+                rrel_context_message_class: concept_student_message_about_help
+            }
+        }
+	}
+};;
+@if_all_topics_found_production <- nrel_reply_production;;
+
+// --- Second production: no disciplines found
+
+@all_topics_not_found_reply_template = [🤔 К сожалению, я пока не знаю ни одной дисциплины. Но я учусь!];;
+
+@if_all_topics_not_found_production = {
+    rrel_reply_template: {
+		rrel_message_template: @all_topics_not_found_reply_template;
+        rrel_message_class: concept_system_reply_message_with_question;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_unknown_message;
+                rrel_context_message_class: concept_student_message_about_help
+            }
+        }
+	}
+};;
+@if_all_topics_not_found_production <- nrel_reply_production;;
+
+// ---- Message topic class
+
+concept_student_message_about_searching_all_topics
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе всех дисциплин и тем]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [найти все дисциплины и темы, которые я знаю]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+        <- .process_disciplines;;
+    *);
+=> nrel_example:
+    [Какие темы ты знаешь?]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_all_topics_found_production;
+    @if_all_topics_not_found_production
+>;
+=> nrel_message_keywords: [
+    какие темы ты знаешь;
+    что ты знаешь по темам;
+    перечень всех тем;
+    скинь все темы;
+    какие у тебя есть темы;
+    расскажи про свои темы;
+    список тем;
+    какие темы есть;
+];
+=> nrel_message_patterns: [
+];;

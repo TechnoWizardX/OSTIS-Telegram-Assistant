@@ -216,6 +216,10 @@ concept_student_message_about_greeting
     @if_student_not_greeted_yet_production
 >;
 => nrel_message_keywords: [
+    ку;
+    шо;
+    апельсин;
+    шалом;
     /start;
     привет;
     здравствуй;

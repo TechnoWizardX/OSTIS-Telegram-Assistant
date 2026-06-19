@@ -13,6 +13,7 @@ concept_basic_specification
     nrel_definition;
     nrel_purpose;
     nrel_explanation;
+    nrel_specification;
     nrel_simple_explanation;
     nrel_key_questions;
     nrel_decomposition;
@@ -26,7 +27,8 @@ concept_basic_specification
     nrel_advantages;
     nrel_disadvantages;
     nrel_note;
-    nrel_materials
+    nrel_materials;
+    nrel_inclusion
 > (*
     => nrel_system_identifier:
         [basic_specification_objects_order];;
