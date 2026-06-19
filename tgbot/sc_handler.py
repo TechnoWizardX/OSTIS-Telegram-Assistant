@@ -13,7 +13,7 @@ from pathlib import Path
 MACHINE_URL = "ws://localhost:8090"
 
 
-def get_user_class(tg_id: str, user_name: str) -> tuple[str, ScAddr | None]:
+def get_user_class(tg_id: str, user_name: str) -> str:
     """
     Проверяет, известен ли пользователь в БZ.
     Возвращает 'concept_student' | 'concept_known_user' | 'concept_unknown_user'
@@ -34,13 +34,13 @@ def get_user_class(tg_id: str, user_name: str) -> tuple[str, ScAddr | None]:
         if user_addr.is_valid():
             if _is_student(user_addr):
                 log(f"User {tg_id} ({user_name}) found as STUDENT", system="SC_HANDLER")
-                return ("concept_student", user_addr)
+                return "concept_student"
             else:
                 log(f"User {tg_id} ({user_name}) found as USER", system="SC_HANDLER")
-                return ("concept_user", user_addr)
+                return "concept_user"
         else:
             log(f"User {tg_id} ({user_name}) NOT FOUND in KB - treating as UNKNOWN", system="SC_HANDLER")
-            return ("concept_unknown_user", None)
+            return "concept_unknown_user"
 
     except Exception as e:
         log(f"Error checking user: {e}", level="error", system="SC_HANDLER")
@@ -58,24 +58,25 @@ def _search_user_by_tg_id(tg_id: str) -> ScAddr:
     log(f"tg_id {tg_id} was found at ScAddr: {found_links[0]}", "info", "SC_HANDLER|SEARCH TG ID")
     tg_id_link = found_links[0]
 
-    nrel_tg_id = ScKeynodes["nrel_user_id"]  # твой идентификатор отношения
-    log(f"nrel_user_id ScAddr {nrel_tg_id}", "info", "SC_HANDLER|SEARCH TG ID")
+    idtf = ScAddr()
     template = ScTemplate()
     template.quintuple(
-        sc_type.VAR_NODE,   # искомый узел пользователя
-        sc_type.VAR_COMMON_ARC,        # =>
-        tg_id_link,                    # конкретная ссылка с tg_id
-        sc_type.VAR_PERM_POS_ARC,      # ->
-        nrel_tg_id                     # nrel_tg_id
+        sc_type.VAR_NODE >> "tg_id_user",
+        sc_type.VAR_COMMON_ARC,
+        tg_id_link,
+        sc_type.VAR_POS_ARC,
+        ScKeynodes["nrel_user_id"]
     )
 
-    results = search_by_template(template)[0]
+    results = search_by_template(template)
+    print(results)
+    result = results[0]
 
     if not results:
         log(f"No user node found for tg_id {tg_id}", system="SC_HANDLER|SEARCH TG ID")
         return ScAddr(0)
 
-    user_addr = results.get(0)
+    user_addr = result.get("tg_id_user")
     log(f"Found user: {user_addr}", system="SC_HANDLER|SEARCH TG ID")
     return user_addr
 
@@ -108,21 +109,20 @@ def send_message_to_sc(message: str, tg_id: str, user_name: str) -> None:
     """
     if not is_connected():
         connect(MACHINE_URL)
-    construct = ScConstruction()
 
-    user_info = get_user_class(tg_id, user_name)
-    user_node_addr = user_info[1]
-    user_class = user_info[0]
+    user_class = get_user_class(tg_id, user_name)
+
     log(f"Found user class: {user_class}", system="SC_HANDLER|SEND MESSAGE")
     if user_class == "concept_unknown_user":
         log(f"Registering new user with tg_id {tg_id} and name {user_name}", system="SC_HANDLER|SEND MESSAGE")
         user_node_addr = sign_up_new_user(tg_id, user_name)
     else:
+        user_node_addr = _search_user_by_tg_id(tg_id)
         log(f"Existing user node found: {user_node_addr}", system="SC_HANDLER|SEND MESSAGE")
 
-    message_link = ScLinkContent(message, ScLinkContentType.STRING)
-    construct.generate_link(sc_type.CONST_NODE_LINK, message_link, "_message")
 
+    construct = ScConstruction()
+    construct.generate_link(sc_type.CONST_NODE_LINK, ScLinkContent(message, ScLinkContentType.STRING), "_message")
     message_addr = generate_elements(construct)[0]
 
     template = ScTemplate()
@@ -133,18 +133,8 @@ def send_message_to_sc(message: str, tg_id: str, user_name: str) -> None:
         sc_type.VAR_PERM_POS_ARC,
         ScKeynodes["nrel_message_author"]
     )
-    scs = f"""{tg_id}
-=> nrel_user_id: [{tg_id}];
-=> nrel_main_idtf: [{user_name}];
-=> nrel_system_identifier: [{tg_id}];
-<- concept_user;;
-"""
-    dir_path = Path(__file__).parent.parent / "knowledge-base" / "users" / "tgusers" / f"user_{tg_id}.scs"
-
-    print(dir_path)
-    with dir_path.open('w', encoding='utf-8') as f:
-        f.write(scs)
-    generate_by_template(template)
+    log(f"Message: {message} was sended by {tg_id}", system = "SC_HANDLER")
+    result = generate_by_template(template)
 
 def sign_up_new_user(tg_id: str, user_name: str) -> ScAddr:
     """
@@ -191,13 +181,16 @@ def sign_up_new_user(tg_id: str, user_name: str) -> ScAddr:
             sc_type.VAR_PERM_POS_ARC,
             ScKeynodes["nrel_main_idtf"]
         )
-        template.quintuple(
-            user_node_addr,
-            sc_type.VAR_COMMON_ARC,
-            tg_id_link_addr,
-            sc_type.VAR_PERM_POS_ARC,
-            ScKeynodes["nrel_system_identifier"]
-        )
+        scs = f"""{tg_id}
+        => nrel_user_id: [{tg_id}];
+        => nrel_main_idtf: [{user_name}];
+        <- concept_user;;
+        """
+        dir_path = Path(__file__).parent.parent / "knowledge-base" / "users" / "tgusers" / f"user_{tg_id}.scs"
+
+        print(dir_path)
+        with dir_path.open('w', encoding='utf-8') as f:
+            f.write(scs)
         generate_by_template(template)
 
         return user_node_addr
