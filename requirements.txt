@@ -1,2 +1,6 @@
 argparse
 websocket-client
+py-sc-client
+py-sc-kpm
+aiogram
+dotenv

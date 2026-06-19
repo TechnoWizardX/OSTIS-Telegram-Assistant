@@ -1,4 +1,4 @@
-concept_sc_code_topic
+sc_code_topic
 <- concept_discipline_topic;
 => nrel_key_concepts: {
     concept_sc_code;
@@ -23,7 +23,7 @@ concept_sc_code_topic
     (*
         <- lang_ru;;
     *);;
-    
+
 concept_sc_code
 <- sc_node_class;
 <- concept;
@@ -47,7 +47,7 @@ concept_sc_code
 
 concept_basic_concepts
 <- sc_node_class;
-<= nrel_inclusion: concept_sc_code_topic;
+<= nrel_inclusion: sc_code_topic;
 => nrel_main_idtf:
     [Основные понятия SC-кода]
     (*

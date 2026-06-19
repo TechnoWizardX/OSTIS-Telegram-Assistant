@@ -36,6 +36,7 @@ sleep 0.3
 open_terminal "terminal2" "cd '$SCRIPT_DIR' && ./scripts/start.sh web"
 sleep 0.3
 open_terminal "terminal3" "cd '$SCRIPT_DIR' && ./scripts/start.sh interface"
-
+sleep 0,3
+open_terminal "terminal4" "cd '$SCRIPT_DIR' && ./scripts/start.sh py_server"
 echo ""
 echo "✅ Все терминалы запущены"
