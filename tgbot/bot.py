@@ -3,41 +3,18 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
 from aiogram.types import Message
-from sc_client.client import connect, disconnect, is_connected
+from sc_client.client import connect, disconnect
 
 import dotenv
 
-from sc_handler import MACHINE_URL, send_message_to_sc
+from sc_handler import MACHINE_URL, send_message_to_sc, subscribe_to_message
 
 dotenv.load_dotenv()
 
 BOT_TOKEN = os.environ.get("TG_BOT_TOKEN") or os.environ.get("TELEGRAM_BOT_TOKEN")
-SYSTEM_PROMPT = (
-    "You are a helpful AI assistant for an OSTIS Telegram bot. "
-    "Answer user requests clearly and concisely. "
-    "If the user sends /askai, treat the following text as the actual request."
-)
-
-
-def create_ai_request(user_text: str) -> dict:
-    """Подготавливает структуру запроса для AI.
-
-    Этот метод формирует словарь с системным промптом
-    и пользовательским запросом. Позже туда можно будет
-    подставить вызов модели или API.
-    """
-    return {
-        "system_prompt": SYSTEM_PROMPT,
-        "user_prompt": user_text,
-    }
 
 
 async def start_command_handler(message: Message) -> None:
-    """Обрабатывает команду /start.
-
-    Отправляет приветственное сообщение и краткую инструкцию
-    о том, как работать с ботом.
-    """
     await message.answer(
         "Привет! Я бот OSTIS Assistant.\n"
         "Используй /askai <вопрос>, чтобы отправить запрос облачному AI.\n"
@@ -46,11 +23,6 @@ async def start_command_handler(message: Message) -> None:
 
 
 async def ask_ai_command_handler(message: Message) -> None:
-    """Обрабатывает команду /askai.
-
-    Разбирает текст команды, извлекает вопрос пользователя,
-    создаёт заглушку запроса к AI и отвечает подтверждением.
-    """
     text = (message.text or "").strip()
     parts = text.split(maxsplit=1)
     if len(parts) < 2:
@@ -61,33 +33,15 @@ async def ask_ai_command_handler(message: Message) -> None:
         return
 
     user_query = parts[1].strip()
-    request_payload = create_ai_request(user_query)
-
-    await message.answer("Я получил запрос и передаю его в AI-процесс.")
-    await message.answer(
-        "```System prompt:\n" + request_payload["system_prompt"] + "\n\n"
-        "User prompt:\n" + request_payload["user_prompt"] + "```",
-        parse_mode="Markdown",
-    )
+    await message.answer(f"Вы спросили: {user_query}. В разработке.")
 
 
 async def default_message_handler(message: Message) -> None:
-    """Обрабатывает любое сообщение, которое не является командой.
-
-    Это простой перехватчик, который отвечает пользователю
-    """
     send_message_to_sc(message.text, str(message.from_user.id), message.from_user.first_name)
-    await message.answer(
-        f"Сообщение принято. Сейчас это заглушка. TG_ID: {message.from_user.id}, User Name: {message.from_user.first_name}"
-    )
+    await message.answer("✅ Сообщение отправлено. Ожидай ответ...")
 
 
 async def main() -> None:
-    """Запускает бота и регистрирует обработчики.
-
-    Проверяет наличие токена, создаёт экземпляр Bot и Dispatcher,
-    регистрирует команды и запускает опрос Telegram.
-    """
     if not BOT_TOKEN:
         raise RuntimeError(
             "Telegram bot token not found. Set TG_BOT_TOKEN or TELEGRAM_BOT_TOKEN environment variable."
@@ -95,6 +49,16 @@ async def main() -> None:
 
     bot = Bot(token=BOT_TOKEN)
     dp = Dispatcher()
+    loop = asyncio.get_event_loop()
+
+    # Колбэк для SC-подписки — перекидывает ответ из SC (sync) в async event loop
+    def handle_reply(tg_id: int, text: str) -> None:
+        asyncio.run_coroutine_threadsafe(
+            bot.send_message(chat_id=tg_id, text=text),
+            loop
+        )
+
+    subscribe_to_message(handle_reply)
 
     dp.message.register(start_command_handler, Command(commands=["start"]))
     dp.message.register(ask_ai_command_handler, Command(commands=["askai"]))
@@ -109,5 +73,4 @@ async def main() -> None:
 
 if __name__ == "__main__":
     connect(MACHINE_URL)
-
     asyncio.run(main())
