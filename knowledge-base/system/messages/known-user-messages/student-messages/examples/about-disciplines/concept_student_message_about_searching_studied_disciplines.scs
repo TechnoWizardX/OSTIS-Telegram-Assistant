@@ -8,7 +8,7 @@
 #foreach
 - ${concept_discipline}#if(${foreach.hasNext}),#else.#endif
 #endfor
-🤔 Какая из них тебя интересует?];;
+🤔 Какая из них тебя интересует? Напиши: "Расскажи про...(название дисциплины)"];;
 
 @if_studied_disciplines_found_production = {
     rrel_condition_template: {

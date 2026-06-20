@@ -1,0 +1,38 @@
+concept_sc_code_topic
+<- concept_discipline_topic;
+=> nrel_main_idtf:
+    [Ocyjds]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_key_concepts: {
+    concept_sc_syntax;
+    concept_sc_alphabet;
+    concept_sc_element_classification;
+    concept_sc_node;
+    concept_sc_node_constant;
+    concept_sc_node_variable;
+    concept_sc_node_nonfile;
+    concept_sc_node_file_sign;
+    concept_sc_connector;
+    concept_sc_edge;
+    concept_sc_arc;
+    concept_sc_arc_general;
+    concept_sc_arc_main;
+    concept_sc_arc_permanent;
+    concept_sc_arc_temporal;
+    concept_sc_arc_positive;
+    concept_sc_arc_negative;
+    concept_sc_arc_fuzzy;
+    concept_sc_external_representation;
+    concept_scg_code;
+    concept_scs_code;
+    concept_scn_code;
+    nrel_incidence;
+    nrel_incidence_second
+};
+=> nrel_explanation:
+    [Тема посвящена синтаксису SC-кода: алфавиту Ядра SC-кода, синтаксической классификации sc-элементов (sc-узлы, sc-коннекторы, их разновидности), формам внешнего представления (SCg-код, SCs-код, SCn-код), scs-коннекторам, разделителям, ограничителям, предложениям, правилам перевода и принципам формализации.]
+    (*
+        <- concept_explanation;;
+    *);;

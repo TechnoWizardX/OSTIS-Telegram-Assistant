@@ -1,0 +1,21 @@
+concept_ostis
+<- sc_node_class;
+<- concept;
+<= nrel_inclusion: ostis_basics_discipline;
+=> nrel_main_idtf:
+    [OSTIS]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [OSTIS — это технология с открытым исходным кодом для совместимых интеллектуальных систем нового поколения.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [OSTIS обеспечивает интеграцию различных типов знаний, моделей решения проблем и интеллектуальных интерфейсов, что позволяет создавать семантически совместимые интеллектуальные системы.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);;

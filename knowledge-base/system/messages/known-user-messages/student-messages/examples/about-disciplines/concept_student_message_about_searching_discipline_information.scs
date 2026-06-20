@@ -14,7 +14,7 @@ ${concept_purpose}
 
 
 
-🤔 Хочешь узнать подробнее?];;
+🤔 Хочешь узнать подробнее? Напиши: "Расскажи про...(название дисциплины)"];;
 
 @if_discipline_information_found_production = {
     rrel_condition_template: {

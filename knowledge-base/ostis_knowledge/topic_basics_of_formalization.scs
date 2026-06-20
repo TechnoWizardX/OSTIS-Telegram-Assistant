@@ -35,6 +35,6 @@ topic_basics_of_formalization
         <- lang_ru;;
     *);
 => nrel_decomposition: <
-    concept_sc_code_topic;
+    sc_code_topic;
     sc_syntax_topic
 >;;
