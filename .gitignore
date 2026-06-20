@@ -22,4 +22,5 @@ kb.bin
 
 .DS_Store
 knowledge-base/ostis_knowledge/test.scs
+knowledge-base/users/tgusers/*
 *.pid
