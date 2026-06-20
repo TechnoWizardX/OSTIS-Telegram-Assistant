@@ -1,0 +1,628 @@
+//////////////////////////////////////
+// Study Plan: 7-Day OSTIS & SC-code Intensive
+// Handles "День 1" through "День 7" queries
+//////////////////////////////////////
+
+// ====================================================================
+// DAY 1 — Философия и архитектура OSTIS
+// ====================================================================
+
+@study_day_1_reply_template = [📅 <b>День 1: Философия и архитектура OSTIS</b>
+
+<b>🎯 Цель дня:</b>
+Понять глобальную концепцию технологии OSTIS и проблему расширяемости интеллектуальных систем.
+
+<b>📖 Изучаемые концепты:</b>
+• <b>OSTIS</b> — технология с открытым исходным кодом для совместимых интеллектуальных систем нового поколения
+• <b>Проект OSTIS</b> — экосистема инструментов и компонентов
+
+<b>🔬 Теоретический фокус:</b>
+
+<b>1. Проблема современных гибридных систем:</b>
+• Они монолитны — очень сложны в модификации
+• Компоненты практически невозможно повторно использовать
+• Разработка требует огромных ресурсов
+
+<b>2. Понятие настоящей интеллектуальной системы:</b>
+Это не система, способная решать конкретную задачу, а система, которая может легко научиться решать новые задачи без значительных затрат.
+
+<b>3. Три кита архитектуры OSTIS:</b>
+• <b>База знаний</b> — описывает любые виды знаний, легко дополняется
+• <b>Решатель задач</b> — мультиагентный подход, интеграция любых моделей
+• <b>Пользовательский интерфейс</b> — тоже описывается SC-кодом
+
+<b>4. Ключевые преимущества:</b>
+• <b>Plug & Play</b> — компоненты интегрируются без затрат
+• <b>Рефлексивность</b> — самоанализ и оптимизация системы
+• <b>Платформонезависимость</b> — разработка сводится к модели
+
+💡 <i>Начни с изучения концептов <b>concept_ostis</b> и <b>concept_ostis_project</b> в базе знаний!</i>];;
+
+@if_study_day_1_production = {
+    rrel_reply_template: {
+        rrel_message_template: @study_day_1_reply_template;
+        rrel_message_class: concept_system_reply_message;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_message_about_searching_studied_disciplines;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            }
+        }
+    }
+};;
+@if_study_day_1_production <- nrel_reply_production;;
+
+concept_student_message_about_study_plan_day1
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе Дня 1 учебного плана]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [показать День 1 учебного плана]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+    *);
+=> nrel_example:
+    [День 1]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_study_day_1_production
+>;
+=> nrel_message_keywords: [
+    день 1;
+    день первый;
+    первый день;
+    1 день;
+    day 1
+];;
+
+// ====================================================================
+// DAY 2 — Анатомия SC-кода: Базовые элементы
+// ====================================================================
+
+@study_day_2_reply_template = [📅 <b>День 2: Анатомия SC-кода — Базовые элементы</b>
+
+<b>🎯 Цель дня:</b>
+Освоить минимальные неделимые единицы, из которых строится семантическая память SC-кода.
+
+<b>📖 Изучаемые концепты:</b>
+• <b>SC-код</b> — универсальный формальный язык смыслового представления знаний
+• <b>sc-элемент</b> — атомарная единица SC-кода
+• <b>sc-конструкция</b> — знаковая конструкция SC-кода
+• <b>sc-множество</b> — множество sc-элементов
+• <b>sc-структура</b> — множество со связками между элементами
+
+<b>🔬 Теоретический фокус:</b>
+
+<b>1. SC-код (Semantic Computer Code):</b>
+• Универсальный язык на стыке теории множеств и теории графов
+• Обеспечивает единообразие представления любой информации
+• Удобен для машинной обработки и восприятия человеком
+
+<b>2. Иерархия элементов:</b>
+• <b>sc-элемент</b> → атомарная единица (обозначение множества)
+• <b>sc-конструкция</b> → формальная синтаксическая единица
+• <b>sc-множество</b> → объединение sc-элементов
+• <b>sc-структура</b> → множество со связками (семантически значимое)
+
+<b>3. Важно запомнить:</b>
+Каждый sc-элемент является обозначением <b>множества</b>. Из атомов строятся всё более сложные конструкции — от простых множеств до связных семантических структур.
+
+💡 <i>Изучи концепты из темы <b>«Основные понятия SC-кода»</b>!</i>];;
+
+@if_study_day_2_production = {
+    rrel_reply_template: {
+        rrel_message_template: @study_day_2_reply_template;
+        rrel_message_class: concept_system_reply_message;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_message_about_searching_studied_disciplines;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            }
+        }
+    }
+};;
+@if_study_day_2_production <- nrel_reply_production;;
+
+concept_student_message_about_study_plan_day2
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе Дня 2 учебного плана]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [показать День 2 учебного плана]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+    *);
+=> nrel_example:
+    [День 2]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_study_day_2_production
+>;
+=> nrel_message_keywords: [
+    день 2;
+    день второй;
+    второй день;
+    2 день;
+    day 2
+];;
+
+// ====================================================================
+// DAY 3 — От конструкций к знаниям
+// ====================================================================
+
+@study_day_3_reply_template = [📅 <b>День 3: От конструкций к знаниям</b>
+
+<b>🎯 Цель дня:</b>
+Разобраться, как разрозненные структуры превращаются в осмысленные тексты и знания.
+
+<b>📖 Изучаемые концепты:</b>
+• <b>sc-текст</b> — связная семантически корректная sc-структура
+• <b>sc-знание</b> — sc-текст со свойствами знания
+• <b>файл</b> — внешняя информационная конструкция
+• <b>sc-идентификатор</b> — внешнее имя sc-элемента
+• <b>основной sc-идентификатор</b> — уникальное имя элемента
+
+<b>🔬 Теоретический фокус:</b>
+
+<b>1. Путь от структуры к знанию:</b>
+sc-конструкция → sc-структура (со связками) → sc-текст (связный и корректный) → sc-знание (обладает свойствами знания)
+
+<b>2. Что такое sc-текст?</b>
+• Связная sc-структура (не разбивается на несвязанные части)
+• Семантически корректна в рамках SC-кода
+• Соответствует правилам формальной модели
+
+<b>3. Внешняя память: файлы</b>
+• Не являются sc-конструкциями
+• Хранятся в файловой памяти ostis-системы
+• Для данных, не представленных в SC-коде
+
+<b>4. Идентификаторы:</b>
+• Нужны системе только для общения с пользователем
+• Для внутренней работы не требуются
+• Основной идентификатор — уникальное имя в языке
+
+💡 <i>Обрати внимание: sc-идентификаторы — это <b>файлы</b>! Они нужны людям, а не системе.</i>];;
+
+@if_study_day_3_production = {
+    rrel_reply_template: {
+        rrel_message_template: @study_day_3_reply_template;
+        rrel_message_class: concept_system_reply_message;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_message_about_searching_studied_disciplines;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            }
+        }
+    }
+};;
+@if_study_day_3_production <- nrel_reply_production;;
+
+concept_student_message_about_study_plan_day3
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе Дня 3 учебного плана]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [показать День 3 учебного плана]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+    *);
+=> nrel_example:
+    [День 3]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_study_day_3_production
+>;
+=> nrel_message_keywords: [
+    день 3;
+    день третий;
+    третий день;
+    3 день;
+    day 3
+];;
+
+// ====================================================================
+// DAY 4 — Синтаксис Ядра: Алфавит и SC-узлы
+// ====================================================================
+
+@study_day_4_reply_template = [📅 <b>День 4: Синтаксис Ядра — Алфавит и SC-узлы</b>
+
+<b>🎯 Цель дня:</b>
+Глубоко изучить алфавит Ядра SC-кода и полностью разобрать семейство узлов.
+
+<b>📖 Изучаемые концепты:</b>
+• <b>Синтаксис SC-кода</b> — правила построения корректных конструкций
+• <b>Алфавит Ядра SC-кода</b> — 5 классов синтаксически эквивалентных символов
+• <b>Синтаксическая классификация</b> — иерархия sc-элементов
+• <b>sc-узел</b> (+ все подклассы)
+• <b>sc-элемент</b> — корневой класс иерархии
+
+<b>🔬 Теоретический фокус:</b>
+
+<b>1. Алфавит Ядра SC-кода (5 классов):</b>
+• sc-узлы, не являющиеся знаками файлов
+• sc-узлы, являющиеся знаками файлов
+• sc-рёбра
+• sc-дуги общего вида
+• sc-дуги основного вида (принадлежности)
+
+<b>2. Синтаксическая классификация sc-элементов:</b>
+sc-элемент → sc-узел | sc-коннектор
+
+<b>3. Классификация sc-узлов:</b>
+• По типу: <b>не являющиеся знаком файла</b> vs <b>являющиеся знаком файла</b>
+• По постоянству: <b>константные</b> vs <b>переменные</b>
+
+<b>4. Два отношения инцидентности:</b>
+• nrel_incidence — связь обозначений sc-пар с их элементами
+• nrel_incidence_second — связь обозначений ориентированных sc-пар с их вторыми элементами
+
+💡 <i>Алфавит состоит всего из 5 классов — вся мощь SC-кода строится на этом минимальном базисе!</i>];;
+
+@if_study_day_4_production = {
+    rrel_reply_template: {
+        rrel_message_template: @study_day_4_reply_template;
+        rrel_message_class: concept_system_reply_message;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_message_about_searching_studied_disciplines;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            }
+        }
+    }
+};;
+@if_study_day_4_production <- nrel_reply_production;;
+
+concept_student_message_about_study_plan_day4
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе Дня 4 учебного плана]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [показать День 4 учебного плана]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+    *);
+=> nrel_example:
+    [День 4]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_study_day_4_production
+>;
+=> nrel_message_keywords: [
+    день 4;
+    день четвёртый;
+    день четвертый;
+    четвёртый день;
+    четвертый день;
+    4 день;
+    day 4
+];;
+
+// ====================================================================
+// DAY 5 — Синтаксис Ядра: SC-коннекторы
+// ====================================================================
+
+@study_day_5_reply_template = [📅 <b>День 5: Синтаксис Ядра — SC-коннекторы</b>
+
+<b>🎯 Цель дня:</b>
+Понять, как элементы связываются между собой, и изучить все типы семантических связей.
+
+<b>📖 Изучаемые концепты:</b>
+• <b>sc-коннектор</b> — обозначение связки между sc-элементами
+• <b>sc-ребро</b> — неориентированный коннектор
+• <b>sc-дуга</b> — ориентированный коннектор
+• <b>nrel_incidence</b> — отношение инцидентности 1-го порядка
+• <b>nrel_incidence_second</b> — отношение инцидентности 2-го порядка
+
+<b>🔬 Теоретический фокус:</b>
+
+<b>1. Типы коннекторов:</b>
+• <b>sc-ребро</b> — неориентированная связка (константное / переменное)
+• <b>sc-дуга</b> — ориентированная связка
+
+<b>2. Классификация sc-дуг:</b>
+По виду:
+• <b>Общего вида</b> — не выражает принадлежность
+• <b>Основного вида (принадлежности)</b> — выражает отношение принадлежности
+
+По постоянству (для дуг принадлежности):
+• <b>Постоянные</b> — всегда истинны
+• <b>Временные</b> — актуальные / неактуальные
+
+По модальности (для дуг принадлежности):
+• <b>Позитивные</b> — утверждение
+• <b>Негативные</b> — отрицание
+• <b>Нечёткие (fuzzy)</b> — с неопределённостью
+
+<b>3. Отношения инцидентности:</b>
+• nrel_incidence — первое отношение, связывает обозначения sc-пар с их элементами
+• nrel_incidence_second — второе отношение, подмножество первого, связывает ориентированные sc-пары с их вторыми элементами
+
+💡 <i>Именно sc-дуги принадлежности обеспечивают связь «элемент — класс», которая является основой семантической памяти!</i>];;
+
+@if_study_day_5_production = {
+    rrel_reply_template: {
+        rrel_message_template: @study_day_5_reply_template;
+        rrel_message_class: concept_system_reply_message;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_message_about_searching_studied_disciplines;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            }
+        }
+    }
+};;
+@if_study_day_5_production <- nrel_reply_production;;
+
+concept_student_message_about_study_plan_day5
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе Дня 5 учебного плана]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [показать День 5 учебного плана]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+    *);
+=> nrel_example:
+    [День 5]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_study_day_5_production
+>;
+=> nrel_message_keywords: [
+    день 5;
+    день пятый;
+    пятый день;
+    5 день;
+    day 5
+];;
+
+// ====================================================================
+// DAY 6 — Внешний мир: Идентификаторы и языки
+// ====================================================================
+
+@study_day_6_reply_template = [📅 <b>День 6: Внешний мир — Идентификаторы и языки</b>
+
+<b>🎯 Цель дня:</b>
+Освоить классификацию внешних имён элементов и изучить три главные формы представления SC-кода.
+
+<b>📖 Изучаемые концепты:</b>
+• <b>sc-идентификатор</b> — внешнее имя sc-элемента
+• <b>простой/сложный sc-идентификатор</b>, <b>sc-выражение</b>
+• <b>основной/системный sc-идентификатор</b>
+• <b>строковый/нестроковый sc-идентификатор</b>
+• <b>Внешнее представление SC-кода</b>: SCg, SCs, SCn
+
+<b>🔬 Теоретический фокус:</b>
+
+<b>1. Типы идентификаторов по структуре:</b>
+• <b>Простой</b> — не содержит других идентификаторов
+• <b>Сложный</b> — содержит идентификаторы других элементов
+• <b>sc-выражение</b> — содержит спецификацию сущности
+
+<b>2. Типы идентификаторов по форме:</b>
+• <b>Строковый</b> — строка символов (наиболее распространён)
+• <b>Нестроковый</b> — пиктограмма, аудио, условное обозначение
+
+<b>3. Системные идентификаторы:</b>
+• Уникальны во всей Экосистеме OSTIS
+• Алфавит упрощён (без пробелов и спецсимволов)
+• На основе англоязычных идентификаторов
+
+<b>4. Три формы внешнего представления:</b>
+• <b>SCg-код</b> (graphical) — графическое представление, визуальные графы
+• <b>SCs-код</b> (string) — строковое представление (мы пишем на нём!)
+• <b>SCn-код</b> (natural) — гипертекстовое, близкое к естественному языку
+
+💡 <i>Один и тот же sc-элемент может быть представлен во всех трёх формах — они эквивалентны!</i>];;
+
+@if_study_day_6_production = {
+    rrel_reply_template: {
+        rrel_message_template: @study_day_6_reply_template;
+        rrel_message_class: concept_system_reply_message;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_message_about_searching_studied_disciplines;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            }
+        }
+    }
+};;
+@if_study_day_6_production <- nrel_reply_production;;
+
+concept_student_message_about_study_plan_day6
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе Дня 6 учебного плана]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [показать День 6 учебного плана]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+    *);
+=> nrel_example:
+    [День 6]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_study_day_6_production
+>;
+=> nrel_message_keywords: [
+    день 6;
+    день шестой;
+    шестой день;
+    6 день;
+    day 6
+];;
+
+// ====================================================================
+// DAY 7 — Практикум формализации и экосистема
+// ====================================================================
+
+@study_day_7_reply_template = [📅 <b>День 7: Практикум формализации и экосистема</b>
+
+<b>🎯 Цель дня:</b>
+Собрать все знания воедино, понять правила трансляции и познакомиться с инструментарием разработчика.
+
+<b>📖 Изучаемые компоненты:</b>
+• <b>Правила построения идентификаторов</b>
+• <b>Системные sc-идентификаторы</b>
+• <b>Экосистема OSTIS</b> — репозитории и инструменты
+
+<b>🔬 Теоретический и практический фокус:</b>
+
+<b>1. Правила построения идентификаторов:</b>
+• Определяют допустимые символы
+• Определяют структуру идентификаторов
+• Системные идентификаторы: без пробелов, на английском
+
+<b>2. Правила перевода между формами:</b>
+• SCg → SCs: граф → текст
+• SCs → SCn: текст → гипертекст
+• Любая форма может быть транслирована в любую другую
+
+<b>3. Стек технологий OSTIS:</b>
+• <b>OSTIS Standard</b> — стандарт технологии
+• <b>OSTIS Metasystem</b> — метасистема
+• <b>OSTIS Platform</b>:
+  - sc-memory (программная реализация памяти)
+  - Python API клиент
+  - TypeScript API клиент
+  - scp-machine
+  - Интерпретатор интерфейсов
+  - Компонентный менеджер
+• <b>Редактор БЗ</b> и <b>плагин для VS Code</b>
+
+<b>4. Итоговое упражнение:</b>
+Декомпозиция небольшой предметной области:
+• Выделить узлы (понятия)
+• Связать их дугами принадлежности
+• Присвоить идентификаторы
+
+💡 <i>Поздравляю с завершением интенсива! Ты готов к работе с OSTIS и SC-кодом! 🚀</i>];;
+
+@if_study_day_7_production = {
+    rrel_reply_template: {
+        rrel_message_template: @study_day_7_reply_template;
+        rrel_message_class: concept_system_reply_message;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_message_about_searching_studied_disciplines;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            }
+        }
+    }
+};;
+@if_study_day_7_production <- nrel_reply_production;;
+
+concept_student_message_about_study_plan_day7
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе Дня 7 учебного плана]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [показать День 7 учебного плана]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+    *);
+=> nrel_example:
+    [День 7]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_study_day_7_production
+>;
+=> nrel_message_keywords: [
+    день 7;
+    день седьмой;
+    седьмой день;
+    7 день;
+    day 7
+];;
