@@ -1,0 +1,23 @@
+topic_python_libraries
+<- concept_discipline;
+=> nrel_main_idtf:
+    [Python библиотеки]
+    (*
+
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Python библиотеки - раздел, объясняющий работу таких библиотек как py-sc-client и py-sc-kpm]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Данный раздел направлен на обучение использования библиотек для работы с sc-машиной/сервером]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_decomposition: <
+    topic_py_sc_client
+>;;

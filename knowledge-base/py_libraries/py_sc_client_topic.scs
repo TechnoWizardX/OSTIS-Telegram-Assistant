@@ -1,0 +1,35 @@
+topic_py_sc_client
+<- concept_discipline_topic;
+=> nrel_main_idtf:
+    [Библиотека py-sc-client]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Тема посвящена изучению функционала, предоставляемого библиотекой py-sc-client]
+    (*
+        <- concept_explanation;;
+    *);
+=> nrel_key_concepts: {
+    concept_work_with_sc_server;
+    concept_scaddr;
+    concept_sctype;
+    concept_scconstruction;
+    concept_sctemplate
+};;
+
+concept_work_with_sc_server
+<- sc_node_class;
+<- concept;
+=> nrel_main_idtf:
+    [Работа с sc-сервером]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Есть 3 основные функции - connect(url), disconnect(), is_connected(). \n
+    connect(url)
+    ]
+    (*
+        <- lang_ru;;
+    *);;
