@@ -79,6 +79,27 @@ def _search_user_by_tg_id(tg_id: str) -> ScAddr:
     return ScAddr()
 
 
+def _resolve_myself() -> ScAddr:
+    """Находит узел myself (системный агент Ника) в SC-памяти."""
+    try:
+        templ = ScTemplate()
+        templ.triple(
+            ScKeynodes["concept_intelligent_system"],
+            sc_type.VAR_PERM_POS_ARC,
+            sc_type.VAR_NODE >> "_myself"
+        )
+        results = search_by_template(templ)
+        if results:
+            myself_addr = results[0].get("_myself")
+            log(f"Resolved myself: {myself_addr}", system="SC_HANDLER")
+            return myself_addr
+        log("myself not found in KB", level="error", system="SC_HANDLER")
+        return ScAddr()
+    except Exception as e:
+        log(f"Error resolving myself: {e}", level="error", system="SC_HANDLER")
+        return ScAddr()
+
+
 def _is_student(user_addr: ScAddr) -> bool:
     try:
         student_class = ScKeynodes["concept_student"]
@@ -144,6 +165,8 @@ def sign_up_new_user(tg_id: str, user_name: str) -> ScAddr:
     """Регистрирует нового пользователя в KB."""
     if not is_connected():
         connect(MACHINE_URL)
+
+    user_node_addr = ScAddr()
     try:
         construct = ScConstruction()
         construct.generate_link(sc_type.CONST_NODE_LINK,
@@ -183,18 +206,44 @@ def sign_up_new_user(tg_id: str, user_name: str) -> ScAddr:
         scs = (f"{safe_id}\n"
                f"    => nrel_user_id: [{tg_id}];\n"
                f"    => nrel_main_idtf: [{user_name}];\n"
-               f"    <- concept_student;;\n")
+               f"    <- concept_student;\n"
+               f"    <= nrel_known_user: myself;;\n")
         dir_path = Path(__file__).parent.parent / "knowledge-base" / "users" / "tgusers" / f"user_{tg_id}.scs"
         dir_path.parent.mkdir(parents=True, exist_ok=True)
         with dir_path.open('w', encoding='utf-8') as f:
             f.write(scs)
         log(f"  Wrote {dir_path}", system="SC_HANDLER|SIGN UP")
 
-        return user_node_addr
     except Exception as e:
         log(f"Error signing up new user: {e}", level="error",
             system="SC_HANDLER|SIGN UP")
         return ScAddr()
+
+    # Mark user as known to the system (required for greeting productions).
+    # This is done OUTSIDE the main try/except — a failure here must NOT
+    # prevent user registration.
+    if user_node_addr.is_valid():
+        try:
+            _myself_addr = _resolve_myself()
+            if _myself_addr.is_valid():
+                tmpl = ScTemplate()
+                tmpl.quintuple(
+                    _myself_addr,
+                    sc_type.VAR_COMMON_ARC,
+                    user_node_addr,
+                    sc_type.VAR_PERM_POS_ARC,
+                    ScKeynodes["nrel_known_user"]
+                )
+                generate_by_template(tmpl)
+                log("  Created nrel_known_user relation", system="SC_HANDLER|SIGN UP")
+            else:
+                log("  WARNING: Could not resolve myself — nrel_known_user NOT created",
+                    level="error", system="SC_HANDLER|SIGN UP")
+        except Exception as e:
+            log(f"  WARNING: nrel_known_user creation failed: {e}",
+                level="error", system="SC_HANDLER|SIGN UP")
+
+    return user_node_addr
 
 def subscribe_to_message(message_adder=None) -> list:
     nrel_reply_to_message = ScKeynodes["nrel_reply_to_message"]
@@ -246,7 +295,8 @@ def subscribe_to_message(message_adder=None) -> list:
         tg_id_link = result[0].get("_tg_id_link")
         tg_id = int(get_link_content(tg_id_link)[0].data)
 
-        if message_adder:
+        # Отправляем ТОЛЬКО если текст не пустой
+        if message_adder and text and text.strip():
             message_adder(tg_id, text)
 
     event_params = ScEventSubscriptionParams(
