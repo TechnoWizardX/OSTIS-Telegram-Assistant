@@ -6,29 +6,637 @@ topic_py_sc_client
         <- lang_ru;;
     *);
 => nrel_explanation:
-    [Тема посвящена изучению функционала, предоставляемого библиотекой py-sc-client]
+    [Тема посвящена изучению функционала, предоставляемого библиотекой py-sc-client — низкоуровневым Python-клиентом для общения с sc-сервером через WebSocket. Рассматриваются основные классы и функции: как подключиться к серверу, как создавать и искать элементы в базе знаний, как строить шаблоны для поиска и генерации структур, как подписываться на события в памяти.]
     (*
         <- concept_explanation;;
+        <- lang_ru;;
     *);
 => nrel_key_concepts: {
     concept_work_with_sc_server;
     concept_scaddr;
     concept_sctype;
     concept_scconstruction;
-    concept_sctemplate
+    concept_sctemplate;
+    concept_sc_template_cheatsheet;
+    concept_sc_link_content;
+    concept_sc_event_subscription
 };;
+
+
+// =======================================================
+//  КЛЮЧЕВЫЕ ПОНЯТИЯ
+//  Каждое понятие: <- sc_node_class; <- concept;
+//  nrel_main_idtf — короткое название на русском
+//  nrel_definition — формальное определение (ЧТО ЭТО)
+//  nrel_explanation — простое пояснение (КАК ПОНЯТЬ)
+//  nrel_simple_explanation — "человеческим языком" для новичков
+// =======================================================
+
+
+// ----------------------------
+//  1. Работа с sc-сервером
+// ----------------------------
 
 concept_work_with_sc_server
 <- sc_node_class;
 <- concept;
+<= nrel_inclusion: topic_py_sc_client;
 => nrel_main_idtf:
     [Работа с sc-сервером]
     (*
         <- lang_ru;;
     *);
 => nrel_definition:
-    [
-    ]
+    [Библиотека py-sc-client подключается к sc-серверу по протоколу WebSocket, позволяя выполнять операции с памятью OSTIS-машины: создавать элементы, искать их, читать содержимое ссылок и подписываться на события.]
     (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Представь, что sc-сервер — это огромная база знаний в облаке. Библиотека py-sc-client — твой пульт управления этой базой. Ты подключаешься к серверу командой connect("ws://localhost:8090"), выполняешь нужные операции (создаёшь, ищешь, читаешь), а когда всё сделано — отключаешься командой disconnect(). Пока ты подключён, все твои действия происходят внутри единой sc-памяти.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_simple_explanation:
+    [Три главные команды для начала работы: connect("адрес сервера") — подключиться, is_connected() — проверить подключение, disconnect() — отключиться. Без подключения никакие операции с базой знаний не работают!]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_example:
+    [from sc_client.client import connect, disconnect, is_connected
+# Подключаемся к локальному серверу
+connect("ws://localhost:8090")
+# Проверяем
+if is_connected():
+    print("Готово! Можно работать с базой знаний.")
+# Заканчиваем работу
+disconnect()]
+    (*
+        <- concept_example;;
+        <- lang_ru;;
+    *);;
+
+
+// ----------------------------
+//  2. ScAddr — адрес элемента
+// ----------------------------
+
+concept_scaddr
+<- sc_node_class;
+<- concept;
+<= nrel_inclusion: topic_py_sc_client;
+=> nrel_main_idtf:
+    [ScAddr — адрес элемента в sc-памяти]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [ScAddr (от "Semantic Code Address") — это уникальный числовой адрес любого элемента в памяти OSTIS-машины: узла, дуги или ссылки. Каждый элемент имеет свой неповторимый ScAddr.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Представь, что база знаний — это огромный город домов. У каждого дома есть свой уникальный адрес (улица и номер). ScAddr — это такой же адрес, только для "жителей" sc-памяти. Зная ScAddr, ты можешь найти элемент, прочитать его содержимое, узнать его тип или удалить его. У любого созданного тобой элемента будет свой ScAddr. Главное правило: если ScAddr.is_valid() возвращает False (или сам ScAddr равен нулю) — такого элемента не существует.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_simple_explanation:
+    [ScAddr — это просто число-адрес, которое однозначно указывает на конкретный элемент в базе знаний. Проверить, существует ли элемент: addr.is_valid() или if addr: (если адрес не ноль).]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_example:
+    [from sc_client.models import ScAddr
+
+# Создать "пустой" адрес (никуда не указывает)
+empty = ScAddr()
+print(empty.is_valid())  # False — элемента нет
+
+# Создать адрес с конкретным числом
+addr = ScAddr(12345)
+print(addr.is_valid())   # True — адрес указывает на элемент
+print(addr.value)        # 12345 — само число
+
+# Важно: обычно адреса получают не вручную,
+# а через поиск или создание элементов!]
+    (*
+        <- concept_example;;
+        <- lang_ru;;
+    *);;
+
+
+// ----------------------------
+//  3. ScType — тип элемента
+// ----------------------------
+
+concept_sctype
+<- sc_node_class;
+<- concept;
+<= nrel_inclusion: topic_py_sc_client;
+=> nrel_main_idtf:
+    [ScType — тип sc-элемента]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [ScType определяет, чем именно является элемент в sc-памяти: узлом (NODE), ссылкой с данными (NODE_LINK), дугой-связью (COMMON_ARC) или атрибутивной дугой (PERM_POS_ARC). Тип "собирается" из битовых флагов: константность/переменность, узел/дуга/ссылка, перманентность/временность, позитивность/негативность.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [В базе знаний есть четыре вида "жителей":
+1. Узлы (NODE) — контейнеры понятий: CONST_NODE, VAR_NODE
+2. Ссылки (NODE_LINK) — узлы с текстовыми/числовыми данными: CONST_NODE_LINK, VAR_NODE_LINK
+3. Дуги-рёбра (COMMON_ARC) — соединяют два элемента: VAR_COMMON_ARC
+4. Атрибутивные дуги (PERM_POS_ARC) — прикрепляют отношение к ребру: VAR_PERM_POS_ARC
+
+Константные (CONST_) — "навсегда", переменные (VAR_) — "заполнители" для шаблонного поиска.
+Когда ты ищешь что-то по шаблону — используешь VAR_. Когда создаёшь — CONST_.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_simple_explanation:
+    [ScType отвечает на вопрос "что это за штука в памяти?". Самые частые типы: CONST_NODE (постоянный узел-понятие), CONST_NODE_LINK (постоянная ссылка с текстом), VAR_COMMON_ARC (переменная дуга для поиска связей), CONST_PERM_POS_ARC (постоянная атрибутивная дуга).]
+    (*
+        <- lang_ru;;
+    *);;
+
+
+// ----------------------------
+//  4. ScConstruction — создание элементов
+// ----------------------------
+
+concept_scconstruction
+<- sc_node_class;
+<- concept;
+<= nrel_inclusion: topic_py_sc_client;
+=> nrel_main_idtf:
+    [ScConstruction — пакетное создание элементов]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [ScConstruction — это объект-"строитель", который собирает список команд на создание элементов (узлов, дуг, ссылок) и выполняет их все разом через вызов generate_elements(). Это позволяет создавать несколько элементов за один запрос к серверу.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Представь, что ты заполняешь бланк заказа в интернет-магазине. Сначала добавляешь в корзину всё, что нужно: "создать узел", "создать ссылку с текстом", "соединить их дугой". А потом нажимаешь "Заказать" — и все элементы создаются разом. ScConstruction — это твоя корзина, а generate_elements() — кнопка "Заказать".
+
+Три метода конструктора:
+- generate_node(тип_узла, "псевдоним") — добавить создание узла
+- generate_link(тип_ссылки, ScLinkContent("текст"), "псевдоним") — добавить создание ссылки
+- generate_connector(тип_дуги, откуда, куда, "псевдоним") — добавить создание дуги
+
+Псевдонимы нужны, чтобы потом получить адреса созданных элементов.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_simple_explanation:
+    [ScConstruction — твой список покупок для базы знаний. Ты говоришь "хочу узел, хочу ссылку с таким-то текстом, соедини их дугой", добавляешь всё в конструктор, а потом generate_elements() создаёт всё это в памяти сервера.]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_example:
+    [from sc_client.client import generate_elements
+from sc_client.constants import sc_type
+from sc_client.models import ScConstruction, ScLinkContent, ScLinkContentType
+
+# Создаём конструктор — нашу "корзину"
+construct = ScConstruction()
+
+# Добавляем ссылку с текстом
+construct.generate_link(
+    sc_type.CONST_NODE_LINK,              # тип: постоянная ссылка
+    ScLinkContent("Привет, мир!",          # сам текст
+                  ScLinkContentType.STRING), # тип данных: строка
+    "_my_message"                          # псевдоним
+)
+
+# Выполняем создание
+message_addr = generate_elements(construct)
+
+# message_addr — ScAddr созданной ссылки
+print(f"Создано сообщение с адресом: {message_addr}")]
+    (*
+        <- concept_example;;
+        <- lang_ru;;
+    *);;
+
+
+// ----------------------------
+//  5. ScTemplate — шаблоны поиска и генерации
+// ----------------------------
+
+concept_sctemplate
+<- sc_node_class;
+<- concept;
+<= nrel_inclusion: topic_py_sc_client;
+=> nrel_main_idtf:
+    [ScTemplate — шаблон для поиска и генерации структур]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [ScTemplate — это объект, описывающий структуру из элементов (триплеты и квинтуплы), которую нужно найти в базе знаний или создать. Используется двумя главными функциями: search_by_template() — найти существующую структуру, и generate_by_template() — создать недостающие элементы структуры.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Шаблон — это как трафарет или форма для печенья. Ты описываешь форму (какие элементы и как они связаны), а система либо находит всё, что подходит под эту форму, либо создаёт недостающие кусочки.
+
+Два вида "кирпичиков" шаблона:
+1. Триплет (triple): источник --дуга--> цель. Простая связь трёх элементов.
+2. Квинтупль (quintuple): источник --дуга--> цель, и плюс атрибутивная дуга от отношения к этой дуге. Нужен для отношений вроде "автор сообщения".
+
+Важнейшее правило: в квинтупле дуга между источником и целью — это ВСЕГДА COMMON_ARC, а дуга от отношения — ВСЕГДА PERM_POS_ARC. Не перепутай!
+]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_simple_explanation:
+    [Шаблон — "найди мне вот такую конструкцию в базе знаний". Описываешь, что ищешь (переменные узлы и дуги), и search_by_template возвращает все совпадения.]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_example:
+    [from sc_client.client import search_by_template, generate_by_template
+from sc_client.constants import sc_type
+from sc_client.models import ScTemplate
+from sc_kpm import ScKeynodes
+
+# Пример 1: Найти все элементы класса "concept_student"
+# (всех студентов в базе знаний)
+template = ScTemplate()
+template.triple(
+    ScKeynodes<<concept_student>>,   # источник: класс "студент"
+    sc_type.VAR_PERM_POS_ARC,       # дуга принадлежности
+    sc_type.VAR_NODE >> "_student"  # цель: переменный узел с псевдонимом
+)
+results = search_by_template(template)
+for r in results:
+    student = r.get("_student")
+    print(f"Найден студент: {student}")
+
+# Пример 2: Квинтупль — найти автора сообщения
+template = ScTemplate()
+template.quintuple(
+    message_addr,                    # источник: конкретное сообщение
+    sc_type.VAR_COMMON_ARC,         # ← COMMON (ребро!)
+    sc_type.VAR_NODE >> "_author",  # цель: переменный автор
+    sc_type.VAR_PERM_POS_ARC,       # ← PERM_POS (атрибут!)
+    ScKeynodes<<nrel_message_author>> # отношение
+)
+results = search_by_template(template)
+author = results_0.get("_author")]
+    (*
+        <- concept_example;;
+        <- lang_ru;;
+    *);;
+
+
+// ----------------------------
+//  6. Шпаргалка по sc_type для шаблонов
+// ----------------------------
+
+concept_sc_template_cheatsheet
+<- sc_node_class;
+<- concept;
+<= nrel_inclusion: topic_py_sc_client;
+=> nrel_main_idtf:
+    [Шпаргалка: какие sc_type использовать в шаблонах]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Справочная таблица-шпаргалка, показывающая какой именно sc_type нужно использовать в разных позициях ScTemplate — в триплетах, квинтуплах, при поиске и при создании элементов. Содержит три ключевых блока: 1) какие типы узлов использовать для переменных (поиск), 2) какие типы дуг использовать в разных позициях шаблона, 3) Золотое правило квинтупла и типовые паттерны с готовыми примерами.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [
+============================================================
+ БЛОК 1: ТИПЫ УЗЛОВ — что писать на месте узла в шаблоне
+============================================================
+
+КОГДА ТЫ ИЩЕШЬ (поиск — все типы VAR_):
+┌────────────────────────────────┬──────────────────────────┐
+│ Что ищешь                      │ Пиши                     │
+├────────────────────────────────┼──────────────────────────┤
+│ Обычный узел (понятие)         │ sc_type.VAR_NODE         │
+│ Ссылку с текстом/числом        │ sc_type.VAR_NODE_LINK    │
+│ Узел-класс                     │ sc_type.VAR_NODE_CLASS   │
+│ Структуру (structure)          │ sc_type.VAR_NODE_STRUCTURE│
+└────────────────────────────────┴──────────────────────────┘
+
+КОГДА ТЫ СОЗДАЁШЬ (генерация — все типы CONST_):
+┌────────────────────────────────┬──────────────────────────┐
+│ Что создаёшь                   │ Пиши                     │
+├────────────────────────────────┼──────────────────────────┤
+│ Постоянный узел                │ sc_type.CONST_NODE       │
+│ Постоянную ссылку              │ sc_type.CONST_NODE_LINK  │
+│ Постоянную структуру           │ sc_type.CONST_NODE_STRUCTURE│
+└────────────────────────────────┴──────────────────────────┘
+
+Пример с алиасом (псевдонимом):
+  sc_type.VAR_NODE >> "_my_alias"    ← поиск + именование
+  sc_type.VAR_NODE_LINK >> "_link"   ← поиск ссылки с алиасом
+
+
+============================================================
+ БЛОК 2: ТИПЫ ДУГ — что писать на месте дуги в шаблоне
+============================================================
+
+ВСЕГДА ИСПОЛЬЗУЙ VAR_ ДЛЯ ДУГ В ШАБЛОНАХ ПОИСКА!
+Даже если в базе знаний дуга константная (CONST_PERM_POS_ARC),
+в шаблоне поиска переменная (VAR_) найдёт и константную тоже.
+
+┌──────────────────────────────────────┬────────────────────┐
+│ Ситуация                             │ Пиши               │
+├──────────────────────────────────────┼────────────────────┤
+│ Ребро между двумя элементами         │ VAR_COMMON_ARC     │
+│ (напр. сообщение --дуга--> автор)    │                    │
+├──────────────────────────────────────┼────────────────────┤
+│ Атрибутивная дуга от отношения к ребру│ VAR_PERM_POS_ARC   │
+│ (напр. nrel_message_author --дуга--> │                    │
+│  тому самому ребру)                   │                    │
+├──────────────────────────────────────┼────────────────────┤
+│ Дуга принадлежности к классу         │ VAR_PERM_POS_ARC   │
+│ (напр. concept_student --дуга-->     │                    │
+│  конкретный студент)                  │                    │
+├──────────────────────────────────────┼────────────────────┤
+│ Позитивная дуга (общий случай)       │ VAR_POS_ARC        │
+│ (когда точный подтип не важен)       │                    │
+├──────────────────────────────────────┼────────────────────┤
+│ Дуга принадлежности (membership)     │ VAR_MEMBERSHIP_ARC │
+│ (редко, обычно хватает PERM_POS_ARC) │                    │
+└──────────────────────────────────────┴────────────────────┘
+
+ДЛЯ СОЗДАНИЯ (генерация):
+┌──────────────────────────────────────┬────────────────────┐
+│ Ситуация                             │ Пиши               │
+├──────────────────────────────────────┼────────────────────┤
+│ Создать ребро между элементами       │ CONST_COMMON_ARC   │
+│ (отношение типа nrel_)               │ или                 │
+│                                      │ CONST_PERM_POS_ARC │
+├──────────────────────────────────────┼────────────────────┤
+│ Создать дугу принадлежности к классу │ CONST_PERM_POS_ARC │
+└──────────────────────────────────────┴────────────────────┘
+
+
+============================================================
+ БЛОК 3: ЗОЛОТОЕ ПРАВИЛО КВИНТУПЛА + ГОТОВЫЕ ПАТТЕРНЫ
+============================================================
+
+Квинтупль (quintuple) описывает структуру из 5 элементов:
+  источник --РЕБРО--> цель
+            ↑
+    АТРИБУТИВНАЯ ДУГА
+            │
+      (отношение)
+
+ПОЗИЦИИ В КВИНТУПЛЕ:
+  template.quintuple(
+      src,              # 1. источник (ScAddr или VAR_NODE)
+      sc_type.VAR_COMMON_ARC,     # 2. ← ВСЕГДА COMMON!
+      tgt,              # 3. цель (ScAddr или VAR_NODE)
+      sc_type.VAR_PERM_POS_ARC,   # 4. ← ВСЕГДА PERM_POS!
+      relation          # 5. отношение (ScAddr кейноуда)
+  )
+
+ЗАПОМНИ: позиция 2 = COMMON, позиция 4 = PERM_POS.
+Не перепутай — иначе шаблон ничего не найдёт!
+
+
+ТИПОВЫЕ ПАТТЕРНЫ (копируй и используй):
+
+1. НАЙТИ ВСЕ ЭЛЕМЕНТЫ КЛАССА (триплет):
+   template.triple(
+       ScKeynodes<<concept_student>>,  # класс
+       sc_type.VAR_PERM_POS_ARC,       # дуга принадлежности
+       sc_type.VAR_NODE >> "_item"     # переменный элемент
+   )
+
+2. НАЙТИ АВТОРА СООБЩЕНИЯ (квинтупль):
+   template.quintuple(
+       message_addr,                   # конкретное сообщение
+       sc_type.VAR_COMMON_ARC,         # ← COMMON (ребро!)
+       sc_type.VAR_NODE >> "_author",  # переменный автор
+       sc_type.VAR_PERM_POS_ARC,       # ← PERM_POS (атрибут!)
+       ScKeynodes<<nrel_message_author>>
+   )
+
+3. НАЙТИ tg_id ПОЛЬЗОВАТЕЛЯ (обратный квинтупль):
+   template.quintuple(
+       user_addr,                      # узел пользователя
+       sc_type.VAR_COMMON_ARC,         # ← COMMON
+       sc_type.VAR_NODE_LINK >> "_tg", # ссылка с tg_id
+       sc_type.VAR_PERM_POS_ARC,       # ← PERM_POS
+       ScKeynodes<<nrel_user_id>>
+   )
+
+4. НАЙТИ ОСНОВНОЙ ИДЕНТИФИКАТОР (квинтупль + чтение):
+   template.quintuple(
+       entity_addr,                    # сущность
+       sc_type.VAR_COMMON_ARC,         # ← COMMON
+       sc_type.VAR_NODE_LINK >> "_idtf", # ссылка с именем
+       sc_type.VAR_PERM_POS_ARC,       # ← PERM_POS
+       ScKeynodes<<nrel_main_idtf>>
+   )
+   result = search_by_template(template)
+   name = get_link_content_data(result_0.get("_idtf"))
+
+5. НАЙТИ ЭЛЕМЕНТ ПО НЕ-РОЛЕВОМУ ОТНОШЕНИЮ (квинтупль
+   от отношения):
+   template.quintuple(
+       source_addr,                    # откуда ищем
+       sc_type.VAR_COMMON_ARC >> "_arc", # ← COMMON + алиас!
+       sc_type.VAR_NODE_LINK >> "_link", # переменная цель
+       sc_type.VAR_PERM_POS_ARC,       # ← PERM_POS
+       ScKeynodes<<nrel_explanation>>
+   )
+
+6. НАЙТИ ДЕКОМПОЗИЦИЮ (структуру и её элементы):
+   # Сначала найти структуру-декомпозицию
+   decomp_set = search_element_by_non_role_relation(
+       entity_addr,
+       ScKeynodes<<nrel_decomposition>>
+   )
+   # Потом перебрать элементы внутри
+   template = ScTemplate()
+   template.triple(
+       decomp_set,                     # структура
+       sc_type.VAR_POS_ARC,            # позитивная дуга
+       sc_type.VAR_NODE >> "_elem"     # элемент декомпозиции
+   )
+
+
+============================================================
+ КОРОТКО: КОГДА ЧТО ИСПОЛЬЗОВАТЬ
+============================================================
+
+sc_type.VAR_NODE          — "найди любой узел"
+sc_type.VAR_NODE_LINK     — "найди ссылку с данными"
+sc_type.VAR_NODE_CLASS    — "найди узел-класс"
+sc_type.VAR_COMMON_ARC    — "дуга-ребро между элементами"
+                            (в квинтупле — позиция 2!)
+sc_type.VAR_PERM_POS_ARC  — "атрибутивная дуга к отношению"
+                            (в квинтупле — позиция 4!)
+sc_type.VAR_POS_ARC       — "любая позитивная дуга"
+                            (когда точный тип не важен)
+
+sc_type.CONST_NODE         — "создать постоянный узел"
+sc_type.CONST_NODE_LINK    — "создать постоянную ссылку"
+sc_type.CONST_PERM_POS_ARC — "создать постоянную дугу"
+]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_simple_explanation:
+    [Шпаргалка на один взгляд: для поиска всегда VAR_ (VAR_NODE, VAR_COMMON_ARC, VAR_PERM_POS_ARC), для создания CONST_. В квинтупле позиция 2 (ребро) = VAR_COMMON_ARC, позиция 4 (атрибут) = VAR_PERM_POS_ARC. Не перепутай местами — это ошибка №1 у новичков!]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_note:
+    [Даже если в базе знаний дуга константная (CONST_PERM_POS_ARC), в шаблоне поиска всегда используй переменную (VAR_PERM_POS_ARC). Переменная дуга в шаблоне найдёт и константную.]
+    (*
+        <- concept_note;;
+        <- lang_ru;;
+    *);;
+
+
+// ----------------------------
+//  7. ScLinkContent — работа со ссылками
+// ----------------------------
+
+concept_sc_link_content
+<- sc_node_class;
+<- concept;
+<= nrel_inclusion: topic_py_sc_client;
+=> nrel_main_idtf:
+    [Работа со ссылками (ScLinkContent)]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Ссылка (link) — это особый вид sc-узла, который хранит данные: текст, целое число или число с плавающей точкой. ScLinkContent — объект для упаковки данных при создании или чтении ссылок. Основные операции: создание ссылки с данными, чтение содержимого существующей ссылки, поиск ссылок по их содержимому.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Ссылки — это "конверты с письмами" в базе знаний. Внутри ссылки может быть:
+- Строка (STRING) — например, текст сообщения или идентификатор пользователя
+- Целое число (INT)
+- Дробное число (FLOAT)
+
+Три главные операции:
+1. Создать ссылку: generate_elements() + ScLinkContent("текст", тип)
+2. Прочитать ссылку: get_link_content(addr) → список ScLinkContent (достаём .data)
+3. Найти ссылки по содержимому: search_links_by_contents("что ищем") → список адресов
+
+Внимание: search_links_by_contents возвращает list(list(ScAddr)) — двойной список! Нужно перебирать оба уровня.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_simple_explanation:
+    [Ссылки — способ хранить текст и числа в базе знаний. Создал ссылку — положил данные. get_link_content — прочитал. search_links_by_contents — нашёл все ссылки с нужным текстом.]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_example:
+    [from sc_client.client import get_link_content, search_links_by_contents
+
+# Чтение ссылки
+content_list = get_link_content(link_addr)
+text = content_list_0.data    # достаём строку из первого элемента
+
+# Поиск ссылок по содержимому
+results = search_links_by_contents("3327799189")
+# results = ((адрес1, адрес2), (адрес3), ...)
+for batch in results:          # первый уровень
+    for addr in batch:         # второй уровень
+        print(f"Найдена ссылка с tg_id: {addr}")]
+    (*
+        <- concept_example;;
+        <- lang_ru;;
+    *);;
+
+
+// ----------------------------
+//  7. ScEventSubscription — подписка на события
+// ----------------------------
+
+concept_sc_event_subscription
+<- sc_node_class;
+<- concept;
+<= nrel_inclusion: topic_py_sc_client;
+=> nrel_main_idtf:
+    [Подписка на события в sc-памяти]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Механизм событий позволяет коду реагировать на изменения в sc-памяти в реальном времени. Ты указываешь: "когда произойдёт ТАКОЕ событие с ТАКИМ элементом — вызови МОЙ колбэк". Событие задаётся через ScEventSubscriptionParams (на какой элемент, тип события, функция-колбэк), а создаётся через create_elementary_event_subscriptions().]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Представь, что ты поставил "жучок" на дверь. Когда кто-то входит — жучок срабатывает и посылает тебе сигнал. Так же работают события в sc-памяти:
+- Ты говоришь: "следи за элементом nrel_reply_to_message"
+- Тип события: AFTER_GENERATE_OUTGOING_ARC ("когда от этого элемента проведут новую дугу")
+- Колбэк: функция, которую нужно вызвать
+
+Самые полезные типы событий:
+- AFTER_GENERATE_OUTGOING_ARC — создана дуга ОТ наблюдаемого элемента
+- AFTER_GENERATE_INCOMING_ARC — создана дуга К наблюдаемому элементу
+- BEFORE_ERASE_ELEMENT — перед удалением элемента
+
+Колбэк получает три аргумента:
+- subscribed_addr — адрес элемента, на который подписались
+- arc_addr — адрес созданной дуги
+- connector_addr — адрес соединительной дуги (common_arc)]
+
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_simple_explanation:
+    [События — "следи за изменениями в базе знаний и когда что-то произойдёт — позови мою функцию". Нужно для реакций в реальном времени, например: "когда агент создаст ответ на сообщение — сразу отправь его в Telegram".]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_example:
+    [from sc_client.client import create_elementary_event_subscriptions
+from sc_client.constants.common import ScEventType
+from sc_client.models import ScEventSubscriptionParams
+
+# Колбэк — что делать при срабатывании события
+def on_reply(subscribed_addr, arc_addr, connector_addr):
+    print("Кто-то создал ответ на сообщение!")
+    # Здесь можно найти текст ответа и отправить в Telegram
+# Параметры подписки
+params = ScEventSubscriptionParams(
+    ScKeynodes<<nrel_reply_to_message>>,   # следим за этим элементом
+    ScEventType.AFTER_GENERATE_OUTGOING_ARC, # тип события
+    on_reply                                 # колбэк
+)
+# Создать подписку
+subscriptions = create_elementary_event_subscriptions(params)]
+    (*
+        <- concept_example;;
         <- lang_ru;;
     *);;

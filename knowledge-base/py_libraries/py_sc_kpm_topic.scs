@@ -1,0 +1,395 @@
+topic_py_sc_kpm
+<- concept_discipline_topic;
+=> nrel_main_idtf:
+    [Библиотека py-sc-kpm]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Тема посвящена изучению функционала библиотеки py-sc-kpm — высокоуровневой надстройки над py-sc-client. Библиотека предоставляет удобные классы для создания агентов (ScAgentClassic), управления модулями (ScModule, ScServer), кеширования кейноудов (ScKeynodes) и множество готовых утилит, упрощающих типовые операции с базой знаний.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_key_concepts: {
+    concept_sckeynodes;
+    concept_sc_agent_classic;
+    concept_sc_server_module;
+    concept_sc_kpm_utils;
+    concept_action_utils
+};;
+
+
+// =======================================================
+//  КЛЮЧЕВЫЕ ПОНЯТИЯ
+// =======================================================
+
+
+// ----------------------------
+//  1. ScKeynodes — кешированные кейноуды
+// ----------------------------
+
+concept_sckeynodes
+<- sc_node_class;
+<- concept;
+<= nrel_inclusion: topic_py_sc_kpm;
+=> nrel_main_idtf:
+    [ScKeynodes — кеш системных идентификаторов]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [ScKeynodes — это класс (реализованный через метакласс), который хранит соответствие между строковыми идентификаторами кейноудов (например, "nrel_message_author") и их адресами в sc-памяти. При первом обращении к идентификатору адрес запрашивается у сервера и сохраняется в кеше — последующие обращения происходят мгновенно, без запросов к серверу.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [В базе знаний есть "встроенные" понятия — кейноуды: nrel_message_author, concept_student, nrel_reply_to_message и сотни других. У каждого есть системный идентификатор (строка) и адрес в памяти (ScAddr). ScKeynodes — это твой личный телефонный справочник: ты говоришь "дай мне адрес nrel_message_author", он смотрит в кеш и мгновенно возвращает ScAddr. Если адреса ещё нет в кеше — он сам сходит к серверу, узнает и запомнит.
+
+Использование:
+- ScKeynodes<<идентификатор>> — получить адрес (ошибка, если не найден)
+- ScKeynodes.get("идентификатор") — получить адрес (возвращает пустой, если не найден)
+- ScKeynodes.resolve("идентификатор", тип) — получить или создать
+- ScKeynodes.rrel_index(1) — быстро получить rrel_1, rrel_2, ... rrel_10
+
+Важно: ScKeynodes — НЕ класс для создания объектов! К нему обращаются напрямую: ScKeynodes<<...>>.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_simple_explanation:
+    [ScKeynodes — твой "телефонный справочник" базы знаний. Вместо того чтобы каждый раз искать адрес понятия через сервер, ты просто пишешь ScKeynodes<<нужное_понятие>> и сразу получаешь его адрес.]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_example:
+    [from sc_kpm import ScKeynodes
+
+# Получить адрес отношения "автор сообщения"
+author_rel = ScKeynodes<<nrel_message_author>>
+print(f"nrel_message_author = {author_rel}")
+
+# Получить адрес класса "студент"
+student_class = ScKeynodes<<concept_student>>
+
+# Быстрый доступ к ролевым отношениям
+rrel_1 = ScKeynodes.rrel_index(1)  # первый аргумент действия
+rrel_2 = ScKeynodes.rrel_index(2)  # второй аргумент]
+    (*
+        <- concept_example;;
+        <- lang_ru;;
+    *);;
+
+
+// ----------------------------
+//  2. ScAgentClassic — агенты
+// ----------------------------
+
+concept_sc_agent_classic
+<- sc_node_class;
+<- concept;
+<= nrel_inclusion: topic_py_sc_kpm;
+=> nrel_main_idtf:
+    [ScAgentClassic — фреймворк для создания агентов]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [ScAgentClassic — это базовый класс для создания агентов в OSTIS-системе. Агент — это программа, которая автоматически запускается при появлении action-узла определённого класса в sc-памяти. ScAgentClassic берёт на себя подписку на события, проверку класса action и вызов пользовательского метода on_event().]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Агент в OSTIS — это как "обработчик заказов" в ресторане. Ты (или другая программа) создаёшь "заказ" (action-узел класса, например, "message_classify_action"). ScAgentClassic видит этот заказ, проверяет что он правильного типа, и вызывает твой код (метод on_event) для его обработки. Когда обработка завершена, агент помечает заказ выполненным через finish_action_with_status.
+
+Шаги создания своего агента:
+1. Наследуйся от ScAgentClassic
+2. В __init__ вызови super().__init__("имя_твоего_action_класса")
+3. Переопредели метод on_event(self, src, connector, action_addr) → ScResult
+4. Внутри on_event: получи аргументы через get_action_arguments(), сделай свою работу, вызови finish_action_with_status()
+5. Верни ScResult.OK (успех) или ScResult.SKIP (пропустить)
+
+Метод on_event получает:
+- src — элемент, на который подписан агент
+- connector — дуга, соединяющая src с action
+- action_addr — адрес action-узла (твой "заказ")]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_simple_explanation:
+    [Агент — "робот, который ждёт заказы и выполняет их". Ты создаёшь класс, наследуешься от ScAgentClassic, говоришь "я обрабатываю заказы типа message_classify_action", и когда кто-то создаёт такой заказ — твой on_event вызывается автоматически.]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_example:
+    [from sc_kpm import ScAgentClassic, ScResult
+from sc_kpm.utils.action_utils import (
+    get_action_arguments,
+    finish_action_with_status
+)
+
+class MyAgent(ScAgentClassic):
+    def __init__(self):
+        # "my_action" — имя action-класса,
+        # на который реагирует агент
+        super().__init__("my_action")
+
+    def on_event(self, src, connector, action_addr):
+        # 1. Получить аргументы заказа
+        arg1 = get_action_arguments(action_addr, 1)
+
+        # 2. Сделать свою работу
+        print(f"Обрабатываю заказ {action_addr} с аргументом {arg1}")
+
+        # 3. Завершить заказ успешно
+        finish_action_with_status(action_addr, is_success=True)
+
+        # 4. Сообщить: "я обработал"
+        return ScResult.OK]
+    (*
+        <- concept_example;;
+        <- lang_ru;;
+    *);;
+
+
+// ----------------------------
+//  3. ScServer + ScModule — сервер и модули
+// ----------------------------
+
+concept_sc_server_module
+<- sc_node_class;
+<- concept;
+<= nrel_inclusion: topic_py_sc_kpm;
+=> nrel_main_idtf:
+    [ScServer и ScModule — организация агентов]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [ScServer управляет подключением к sc-серверу и жизненным циклом модулей. ScModule — контейнер, объединяющий несколько агентов в одну группу для удобной регистрации и отмены регистрации. Вместе они образуют архитектурный каркас приложения: сервер подключается, модули регистрируют своих агентов, и система начинает обрабатывать события.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Представь фабрику: ScServer — это само здание фабрики с подключением к электричеству (sc-серверу). ScModule — это цех, в котором работает несколько роботов-агентов. Ты можешь:
+- Создать сервер: server = ScServer("ws://localhost:8090")
+- Создать модуль с агентами: module = MyModule(Agent1(), Agent2())
+- Добавить модуль на сервер: server.add_modules(module)
+- Зарегистрировать всех агентов разом: with server.register_modules():
+- И запустить ожидание: server.serve() (ждёт сигнала Ctrl+C)
+
+Вся магия с with: когда ты используешь with server.connect(), при выходе из блока соединение автоматически закроется. Аналогично with server.register_modules() — при выходе агенты отрегистрируются.
+
+Типичный main() выглядит так:
+1. server = ScServer(url)
+2. with server.connect():
+3.     server.add_modules(Module1(), Module2())
+4.     with server.register_modules():
+5.         server.serve()]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_simple_explanation:
+    [ScServer — "начальник", который подключает всю программу к базе знаний. ScModule — "папка", в которую ты складываешь своих агентов-роботов. Добавил модуль на сервер, зарегистрировал — и все агенты внутри модуля начали работать.]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_example:
+    [from sc_kpm import ScServer, ScModule, ScAgentClassic, ScResult
+
+# Твой агент
+class HelloAgent(ScAgentClassic):
+    def __init__(self):
+        super().__init__("hello_action")
+    def on_event(self, src, conn, action_addr):
+        print("Привет, мир!")
+        return ScResult.OK
+
+# Твой модуль (контейнер агентов)
+class HelloModule(ScModule):
+    def __init__(self):
+        super().__init__(HelloAgent())
+
+# Запуск
+server = ScServer("ws://localhost:8090")
+with server.connect():
+    server.add_modules(HelloModule())
+    with server.register_modules():
+        server.serve()  # ждёт Ctrl+C]
+    (*
+        <- concept_example;;
+        <- lang_ru;;
+    *);;
+
+
+// ----------------------------
+//  4. Утилиты sc_kpm.utils
+// ----------------------------
+
+concept_sc_kpm_utils
+<- sc_node_class;
+<- concept;
+<= nrel_inclusion: topic_py_sc_kpm;
+=> nrel_main_idtf:
+    [Утилиты sc_kpm.utils — готовые операции с KB]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Модуль sc_kpm.utils предоставляет набор готовых функций для типовых операций с базой знаний: создание узлов и ссылок одной строкой, генерация отношений (как ролевых, так и не-ролевых), поиск элементов по отношениям, чтение содержимого ссылок. Эти утилиты — "сахар" над py-sc-client: они делают то же самое, что и ручная работа с ScConstruction и ScTemplate, но короче и понятнее.]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Если py-sc-client — это "напиши 10 строк чтобы создать узел", то sc_kpm.utils — "напиши 1 строку". Сравни:
+
+Через py-sc-client (длинно):
+    construct = ScConstruction()
+    construct.generate_node(sc_type.CONST_NODE)
+    node = generate_elements(construct)
+
+Через sc_kpm.utils (коротко):
+    node = generate_node(sc_type.CONST_NODE)
+
+Самые полезные утилиты:
+
+СОЗДАНИЕ:
+- generate_node(тип) → ScAddr — создать один узел
+- generate_link("текст") → ScAddr — создать ссылку с текстом
+- generate_connector(тип, от, куда) → ScAddr — создать дугу
+
+ОТНОШЕНИЯ (самое важное!):
+- generate_non_role_relation(источник, цель, nrel_отношение) — связь через общую дугу (COMMON_ARC), отношение через PERM_POS_ARC
+- generate_role_relation(источник, цель, rrel_роль) — ролевая связь (PERM_POS_ARC для всего)
+
+ПОИСК:
+- search_element_by_non_role_relation(источник, nrel) → ScAddr — найти элемент по не-ролевому отношению
+- search_element_by_role_relation(источник, rrel) → ScAddr — найти по ролевому
+
+ЧТЕНИЕ:
+- get_link_content_data(addr) → str — прочитать текст ссылки (сразу строку!)
+- get_element_system_identifier(addr) → str — получить системный идентификатор элемента]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_simple_explanation:
+    [sc_kpm.utils — коллекция "коротких путей". Вместо 5 строк кода для создания узла пишешь 1. Вместо ручного шаблона для поиска — вызываешь готовую функцию. Экономит время и уменьшает количество ошибок.]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_example:
+    [from sc_kpm.utils import (
+    generate_node, generate_link,
+    generate_non_role_relation,
+    get_link_content_data
+)
+from sc_kpm import ScKeynodes
+from sc_client.constants import sc_type
+
+# Создать узел одной строкой
+user_node = generate_node(sc_type.CONST_NODE)
+
+# Создать ссылку с текстом
+message_link = generate_link("Привет, это сообщение!")
+
+# Связать сообщение с пользователем (авторство)
+generate_non_role_relation(
+    message_link,                        # от сообщения
+    user_node,                           # к пользователю
+    ScKeynodes<<nrel_message_author>>    # отношение "автор"
+)
+
+# Прочитать текст сообщения
+text = get_link_content_data(message_link)
+print(text)  # "Привет, это сообщение!"]
+    (*
+        <- concept_example;;
+        <- lang_ru;;
+    *);;
+
+
+// ----------------------------
+//  5. Action Utils — управление действиями
+// ----------------------------
+
+concept_action_utils
+<- sc_node_class;
+<- concept;
+<= nrel_inclusion: topic_py_sc_kpm;
+=> nrel_main_idtf:
+    [Управление действиями (action_utils)]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_definition:
+    [Модуль action_utils содержит функции для работы с action-узлами — специальными узлами в sc-памяти, которые представляют "заказы на выполнение" для агентов. Функции позволяют: создать action (generate_action), получить его аргументы (get_action_arguments), завершить с успехом или неудачей (finish_action_with_status), прикрепить результат (generate_action_result).]
+    (*
+        <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Вся экосистема агентов в OSTIS построена на действиях (actions). Это как заказы в системе:
+- Кто-то создаёт заказ: generate_action("message_classify_action")
+- К заказу прикрепляют аргументы через ролевые отношения rrel_1, rrel_2...
+- Агент находит заказ, обрабатывает его и завершает
+
+Рабочий цикл действия:
+1. СОЗДАТЬ: action = generate_action("имя_класса_действия")
+2. ПРИВЯЗАТЬ АРГУМЕНТЫ: generate_role_relation(action, аргумент, ScKeynodes.rrel_index(1))
+3. АГЕНТ ОБРАБАТЫВАЕТ: get_action_arguments(action, количество_аргументов)
+4. ЗАВЕРШИТЬ: finish_action_with_status(action, is_success=True/False)
+
+Функция finish_action_with_status ставит на action две пометки:
+- action_finished_successfully (если is_success=True) или action_finished_unsuccessfully
+- action_finished (в любом случае)
+
+Это позволяет другим агентам узнать, выполнен ли заказ и насколько успешно.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
+=> nrel_simple_explanation:
+    [Действия — "заказы" в базе знаний. generate_action() — создать заказ. get_action_arguments() — прочитать что заказали. finish_action_with_status() — отметить заказ как выполненный.]
+    (*
+        <- lang_ru;;
+    *);
+=> nrel_example:
+    [from sc_kpm.utils.action_utils import (
+    generate_action, get_action_arguments,
+    finish_action_with_status
+)
+from sc_kpm.utils import generate_role_relation
+from sc_kpm import ScKeynodes
+
+#  ---- СО СТОРОНЫ "ЗАКАЗЧИКА": создать заказ ----
+# Создать action
+action = generate_action("message_classify_action")
+
+# Привязать первый аргумент (rrel_1)
+generate_role_relation(
+    action,
+    some_message_addr,
+    ScKeynodes.rrel_index(1)
+)
+
+#  ---- СО СТОРОНЫ АГЕНТА: обработать заказ ----
+def on_event(self, src, conn, action_addr):
+    # Получить аргументы
+    message_arg = get_action_arguments(action_addr, 1)
+
+    # ... обработать ...
+
+    # Завершить успешно
+    finish_action_with_status(action_addr, is_success=True)
+    return ScResult.OK]
+    (*
+        <- concept_example;;
+        <- lang_ru;;
+    *);;

@@ -36,5 +36,6 @@ topic_python_libraries
         => nrel_format: format_html;;
     *);
 => nrel_decomposition: <
-    topic_py_sc_client
+    topic_py_sc_client;
+    topic_py_sc_kpm
 >;;

@@ -14,7 +14,7 @@ DartConfiguration.tcl
 repo
 ims.ostis.kb
 sc-web
-
+example_docs/
 kb.bin
 .env
 *.json
