@@ -1,4 +1,3 @@
-// first production
 @casual_greeting_reply_template = [У меня всё хорошо, спасибо, что спросили. 😊
 
 К сожалению, я могу помочь только зарегистрированным пользователям. Пожалуйста, пройдите регистрацию, чтобы получить доступ к функциям и поддержке.];;
@@ -17,7 +16,6 @@
 	}
 };;
 @casual_greeting_production <- nrel_reply_production;;
-// -------------------
 
 concept_unknown_user_message_about_casual_greeting
 <- sc_node_class;

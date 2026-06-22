@@ -1,9 +1,3 @@
-//////////////////////////////////////
-// Search personal info
-//////////////////////////////////////
-
-// --- First production: personal info found
-
 @if_personal_info_found_reply_template = [😊 Вот информация из твоего профиля:
 
 ${concept_personal_info}];;
@@ -25,8 +19,6 @@ ${concept_personal_info}];;
 	}
 };;
 @if_personal_info_found_production <- nrel_reply_production;;
-
-// --- Message topic class
 
 concept_student_message_about_searching_personal_info
 <- sc_node_class;

@@ -1,4 +1,3 @@
-// first production
 @unknown_reply = [Извини, я пока не знаю, как на это ответить.
 
 Попробуй переформулировать вопрос или уточнить детали — я всегда готов помочь!];;
@@ -9,9 +8,6 @@
 	}
 };;
 @production <- nrel_reply_production;;
-// -------------------
-
-// message topic class
 
 concept_unknown_message
 <- sc_node_class;
