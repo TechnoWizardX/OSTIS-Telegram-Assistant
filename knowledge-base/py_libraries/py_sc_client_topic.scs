@@ -27,8 +27,7 @@ concept_work_with_sc_server
         <- lang_ru;;
     *);
 => nrel_definition:
-    [Есть 3 основные функции - connect(url), disconnect(), is_connected(). \n
-    connect(url)
+    [
     ]
     (*
         <- lang_ru;;
