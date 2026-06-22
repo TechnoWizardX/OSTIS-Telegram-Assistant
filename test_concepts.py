@@ -3,7 +3,6 @@
 import sys
 import os
 
-# Add the project root to path so imports from problem-solver/py work
 sys.path.insert(0, "/home/glehzwmd/OSTIS-Telegram-Assistant/problem-solver/py")
 
 from sc_client import client

@@ -117,7 +117,6 @@ def send_message_to_sc(message: str, tg_id: str, user_name: str) -> None:
             system="SC_HANDLER|SEND MESSAGE")
         return
 
-    # Создаём сообщение
     construct = ScConstruction()
     construct.generate_link(
         sc_type.CONST_NODE_LINK,
@@ -127,7 +126,6 @@ def send_message_to_sc(message: str, tg_id: str, user_name: str) -> None:
     message_addr = generate_elements(construct)[0]
     log(f"Created message link: {message_addr}", system="SC_HANDLER|SEND MESSAGE")
 
-    # Привязываем автора: message --common_arc--> user, arc приписан к nrel_message_author
     template = ScTemplate()
     template.quintuple(
         message_addr,
@@ -147,19 +145,16 @@ def sign_up_new_user(tg_id: str, user_name: str) -> ScAddr:
     if not is_connected():
         connect(MACHINE_URL)
     try:
-        # Создаём ссылку с tg_id
         construct = ScConstruction()
         construct.generate_link(sc_type.CONST_NODE_LINK,
                                 ScLinkContent(tg_id, ScLinkContentType.STRING), "_tg_id_link")
         [tg_id_link_addr] = generate_elements(construct)
 
-        # Создаём ссылку с именем
         construct = ScConstruction()
         construct.generate_link(sc_type.CONST_NODE_LINK,
                                 ScLinkContent(user_name, ScLinkContentType.STRING), "_user_name_link")
         [user_name_link_addr] = generate_elements(construct)
 
-        # Создаём узел пользователя
         construct = ScConstruction()
         construct.generate_node(sc_type.CONST_NODE, "_user_node")
         [user_node_addr] = generate_elements(construct)
@@ -167,28 +162,23 @@ def sign_up_new_user(tg_id: str, user_name: str) -> ScAddr:
         log(f"Generated: user_node={user_node_addr}, tg_id_link={tg_id_link_addr}",
             system="SC_HANDLER|SIGN UP")
 
-        # Отдельно создаём каждое отношение
-        # 1. nrel_user_id: user_node --arc--> tg_id_link
         tmpl = ScTemplate()
         tmpl.quintuple(user_node_addr, sc_type.VAR_COMMON_ARC, tg_id_link_addr,
                        sc_type.VAR_PERM_POS_ARC, ScKeynodes["nrel_user_id"])
         generate_by_template(tmpl)
         log("  Created nrel_user_id relation", system="SC_HANDLER|SIGN UP")
 
-        # 2. concept_user: user_node принадлежит классу
         tmpl = ScTemplate()
         tmpl.triple(ScKeynodes["concept_student"], sc_type.VAR_PERM_POS_ARC, user_node_addr)
         generate_by_template(tmpl)
         log("  Created concept_user membership", system="SC_HANDLER|SIGN UP")
 
-        # 3. nrel_main_idtf: user_node --arc--> имя
         tmpl = ScTemplate()
         tmpl.quintuple(user_node_addr, sc_type.VAR_COMMON_ARC, user_name_link_addr,
                        sc_type.VAR_PERM_POS_ARC, ScKeynodes["nrel_main_idtf"])
         generate_by_template(tmpl)
         log("  Created nrel_main_idtf relation", system="SC_HANDLER|SIGN UP")
 
-        # 4. Пишем .scs файл (для rebuild KB)
         safe_id = f"tg_user_{tg_id}"
         scs = (f"{safe_id}\n"
                f"    => nrel_user_id: [{tg_id}];\n"

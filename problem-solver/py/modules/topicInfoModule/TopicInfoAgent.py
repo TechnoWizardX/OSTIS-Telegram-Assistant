@@ -46,7 +46,6 @@ class TopicInfoAgent(ScAgentClassic):
         """Основной обработчик события"""
         self.logger.info("TopicInfoAgent: Started processing action")
 
-        # --- Извлекаем аргумент ---
         try:
             [arc_to_message_addr] = get_action_arguments(action_addr, 1)
         except Exception:
@@ -54,14 +53,12 @@ class TopicInfoAgent(ScAgentClassic):
             finish_action_with_status(action_addr, is_success=False)
             return ScResult.SKIP
 
-        # --- Получаем файл с сообщением ---
         message_link_addr = self._get_message_link(arc_to_message_addr)
         if not message_link_addr.is_valid():
             self.logger.error("TopicInfoAgent: Message link not found")
             finish_action_with_status(action_addr, is_success=False)
             return ScResult.SKIP
 
-        # --- Текст и автор ---
         message = get_link_content_data(message_link_addr)
         self.logger.info(f"TopicInfoAgent: Message: {message}")
 
@@ -72,10 +69,8 @@ class TopicInfoAgent(ScAgentClassic):
             return ScResult.SKIP
         message_author_class = get_element_system_identifier(message_author_class_addr)
 
-        # --- История диалога для контекста ---
         message_history = self._get_user_dialogue_messages(arc_to_message_addr)
 
-        # --- Классификация ---
         message_topic_class, message_entities, _ = self.classifier.classify(
             message, message_author_class, message_history
         )
@@ -83,7 +78,6 @@ class TopicInfoAgent(ScAgentClassic):
             f"TopicInfoAgent: Classified as: {message_topic_class}, entities: {message_entities}"
         )
 
-        # --- Генерация ответа с учётом контекста ---
         reply_text = self._generate_reply(message_topic_class, message_entities, message_history, message)
 
         if reply_text:
@@ -93,7 +87,6 @@ class TopicInfoAgent(ScAgentClassic):
         finish_action_with_status(action_addr, is_success=True)
         return ScResult.OK
 
-    # ==================== Диспетчер запросов ====================
 
     def _generate_reply(self, message_class: str, entities: dict, message_history: list[str] = None, message: str = None) -> str | None:
         """Генерирует ответ в зависимости от класса сообщения"""
@@ -116,7 +109,6 @@ class TopicInfoAgent(ScAgentClassic):
             return self._handle_unknown_as_topic(message, message_history)
         return None
 
-    # ==================== Обработчики ====================
 
     def _handle_all_topics(self) -> str:
         """Список всех тем"""
@@ -134,16 +126,13 @@ class TopicInfoAgent(ScAgentClassic):
         if not topic_name or len(topic_name.strip()) < self._MIN_NAME_LENGTH:
             return "По какой теме вы хотите получить информацию? Уточните название."
 
-        # Определяем контекст дисциплины из истории диалога
         context_discipline_addr = ScAddr()
         if message_history:
             context_discipline_addr = self._detect_context_discipline(message_history)
 
-        # Ищем тему: сначала в рамках контекстной дисциплины, потом глобально
         topic_addr = self._find_topic_with_context(topic_name, context_discipline_addr)
 
         if not topic_addr or not topic_addr.is_valid():
-            # Фоллбэк: тема не найдена — пробуем как понятие
             concept_result = self._handle_concept_information(topic_name, message_history)
             if concept_result and concept_result.startswith("\U0001f4a1"):
                 return concept_result
@@ -154,11 +143,9 @@ class TopicInfoAgent(ScAgentClassic):
 
         self.logger.info(f"TopicInfoAgent: Found topic addr: {topic_addr.value}")
 
-        # Пояснение
         explanation = self._find_topic_explanation(topic_addr)
         self.logger.info(f"TopicInfoAgent: Got explanation: {explanation[:80] if explanation else 'EMPTY'}")
 
-        # Ключевые понятия
         concepts_list = self._get_key_concepts_names(topic_addr)
         concepts_str = ""
         if concepts_list:
@@ -220,7 +207,6 @@ class TopicInfoAgent(ScAgentClassic):
             parts.append(f"\n\n\u0422\u0435\u043c\u044b \u0434\u0438\u0441\u0446\u0438\u043f\u043b\u0438\u043d\u044b:\n{topics_str}")
         return "\n".join(parts)
 
-    # Порядок отображения свойств понятия (по важности)
     _CONCEPT_RELATION_ORDER = [
         ("nrel_definition", "Определение"),
         ("nrel_explanation", "Пояснение"),

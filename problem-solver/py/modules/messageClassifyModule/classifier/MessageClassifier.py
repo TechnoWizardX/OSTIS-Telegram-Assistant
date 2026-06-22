@@ -39,21 +39,16 @@ class MessageClassifier:
         if message_author_class == "concept_student":
             msg_lower = message.lower()
 
-            # --- Приветствия (регистронезависимые) ---
             if any(phrase in msg_lower for phrase in ["привет", "здравствуй", "добрый день", "доброе утро", "добрый вечер"]):
                 return ["concept_student_message_about_greeting", {}, {}]
             if any(phrase in msg_lower for phrase in ["как дела", "как ты", "что нового"]):
                 return ["concept_student_message_about_casual_greeting", {}, {}]
 
-            # --- Запрос о навыках / помощь ---
             if any(phrase in msg_lower for phrase in ["что ты умеешь", "твои навыки", "какие у тебя навыки", "что ты можешь"]):
                 return ["concept_student_message_about_searching_my_skills", {}, {}]
             if any(phrase in msg_lower for phrase in ["мне нужна помощь", "помоги мне"]):
                 return ["concept_student_message_about_help", {}, {}]
 
-            # --- Запросы про понятия (самые специфичные — содержат слово "понятие") ---
-            # Должны быть ДО discipline_detail и topic_detail, чтобы "расскажи про понятие X"
-            # не перехватилось общим "расскажи про " или "расскажи подробнее про "
             concept_specific_patterns = [
                 ("расскажи про понятие ", "concept"),
                 ("расскажи о понятии ", "concept"),
@@ -68,8 +63,6 @@ class MessageClassifier:
                         return ["concept_student_message_about_searching_concept_information", {entity_class: entity}, {}]
                     return ["concept_student_message_about_searching_concept_information", {}, {}]
 
-            # --- Запрос подробной информации по дисциплине (ДО topic_detail — чтобы "расскажи про дисциплину X"
-            # не перехватилось общим "расскажи про ") ---
             discipline_detail_patterns = [
                 ("расскажи подробнее про ", "concept_discipline"),
                 ("расскажи подробнее о ", "concept_discipline"),
@@ -95,8 +88,6 @@ class MessageClassifier:
                         return ["concept_student_message_about_searching_discipline_information", {entity_class: entity}, {}]
                     return ["concept_student_message_about_searching_discipline_information", {}, {}]
 
-            # --- Запрос информации по теме дисциплины ---
-            # Сначала специфичные с "тему"/"теме", потом общее "расскажи про "
             topic_detail_patterns = [
                 ("расскажи подробнее про тему ", "concept_discipline_topic"),
                 ("расскажи подробнее о теме ", "concept_discipline_topic"),
@@ -110,7 +101,6 @@ class MessageClassifier:
                 ("пришли инфу по теме ", "concept_discipline_topic"),
                 ("информацию по теме ", "concept_discipline_topic"),
                 ("инфу по теме ", "concept_discipline_topic"),
-                # Общий паттерн — перехватывает "расскажи про [название_темы]"
                 ("расскажи про ", "concept_discipline_topic"),
             ]
             for pattern, entity_class in topic_detail_patterns:
@@ -120,7 +110,6 @@ class MessageClassifier:
                         return ["concept_student_message_about_searching_discipline_topic_information", {entity_class: entity}, {}]
                     return ["concept_student_message_about_searching_discipline_topic_information", {}, {}]
 
-            # --- Запрос перечня тем по дисциплине ---
             discipline_topics_patterns = [
                 ("какие темы есть по ", "concept_discipline"),
                 ("какие темы по дисциплине ", "concept_discipline"),
@@ -142,7 +131,6 @@ class MessageClassifier:
                         return ["concept_student_message_about_searching_discipline_topics", {entity_class: entity}, {}]
                     return ["concept_student_message_about_searching_discipline_topics", {}, {}]
 
-            # --- Запрос всех дисциплин / тем (после более специфичных шаблонов с извлечением) ---
             if any(phrase in msg_lower for phrase in [
                 "какие темы ты знаешь",
                 "какие темы есть",
@@ -181,7 +169,6 @@ class MessageClassifier:
             ]):
                 return ["concept_student_message_about_searching_studied_disciplines", {}, {}]
 
-            # --- Запрос понятий (регистронезависимый, самый общий — в конце) ---
             what_is_patterns = [
                 "что такое ",
                 "что это ",

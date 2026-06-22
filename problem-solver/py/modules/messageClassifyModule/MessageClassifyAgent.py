@@ -60,7 +60,6 @@ class MessageClassifyAgent(ScAgentClassic):
         )
         
         generate_non_role_relation(action_addr, result_addr, ScKeynodes["nrel_result"])
-        # Если запрос связан с темами/дисциплинами/понятиями — запускаем TopicInfoAgent
         message_topic_class = classification_result[0]
         if message_topic_class in [
             "concept_student_message_about_searching_all_topics",
