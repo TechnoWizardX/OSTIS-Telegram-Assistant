@@ -1,13 +1,17 @@
+// -- Производство для неизвестного сообщения
+
 @unknown_reply = [Извини, я пока не знаю, как на это ответить.
 
 Попробуй переформулировать вопрос или уточнить детали — я всегда готов помочь!];;
 
-@production = {
+@if_unknown_production = {
     rrel_reply_template: {
-		rrel_message_template: @unknown_reply
-	}
+        rrel_message_template: @unknown_reply
+    }
 };;
-@production <- nrel_reply_production;;
+@if_unknown_production <- nrel_reply_production;;
+
+// -- Класс неизвестных сообщений
 
 concept_unknown_message
 <- sc_node_class;
@@ -20,5 +24,5 @@ concept_unknown_message
 <= nrel_inclusion:
     concept_message;
 => nrel_reply_production_chain: <
-    @production
+    @if_unknown_production
 >;;

@@ -67,6 +67,12 @@ concept_sc_element_classification
         <- concept_definition;;
         <- lang_ru;;
     *);
+=> nrel_explanation:
+    [Синтаксическая классификация делит все sc-элементы на две основные группы: sc-узлы (обозначения множеств) и sc-коннекторы (обозначения пар). Каждая группа далее подразделяется по различным синтаксическим признакам.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
 <= nrel_inclusion: concept_sc_syntax;;
 
 sc_element
@@ -86,6 +92,12 @@ concept_sc_node
         <- concept_definition;;
         <- lang_ru;;
     *);
+=> nrel_explanation:
+    [sc-узлы являются базовыми элементами SC-кода, каждый из которых обозначает некоторое множество. Узлы могут быть константными или переменными, а также могут являться или не являться знаками файлов.]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
 <= nrel_inclusion: sc_element;;
 
 concept_sc_node_nonfile
@@ -100,6 +112,12 @@ concept_sc_node_nonfile
     [Класс sc-элементов, представляющих собой sc-узлы, которые не являются знаками файлов.]
     (*
         <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Такие sc-узлы используются для представления абстрактных понятий и сущностей внутри памяти ostis-системы, без привязки к внешним файлам.]
+    (*
+        <- concept_explanation;;
         <- lang_ru;;
     *);
 <= nrel_inclusion: concept_sc_alphabet;
@@ -147,6 +165,12 @@ concept_sc_node_file_sign
     [Класс sc-элементов, представляющих собой sc-узлы, которые являются знаками файлов.]
     (*
         <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [Такие sc-узлы служат для связи между внутренним представлением знаний и внешними файлами, позволяя ссылаться на файловые данные из SC-кода.]
+    (*
+        <- concept_explanation;;
         <- lang_ru;;
     *);
 <= nrel_inclusion: concept_sc_alphabet;
@@ -198,6 +222,12 @@ concept_sc_connector
         <- concept_definition;;
         <- lang_ru;;
     *);
+=> nrel_explanation:
+    [sc-коннекторы используются для соединения sc-узлов между собой. Они делятся на два основных типа: неориентированные (sc-рёбра) и ориентированные (sc-дуги).]
+    (*
+        <- concept_explanation;;
+        <- lang_ru;;
+    *);
 <= nrel_inclusion: sc_element;;
 
 concept_sc_edge
@@ -212,6 +242,12 @@ concept_sc_edge
     [sc-ребро (неориентированный sc-коннектор) — это класс sc-элементов, представляющих собой неориентированные связки между sc-элементами, являющиеся обозначениями неориентированных sc-пар.]
     (*
         <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [sc-ребро используется для обозначения неориентированных связей между элементами SC-кода. В отличие от sc-дуги, sc-ребро не имеет направления и выражает симметричные отношения между двумя sc-элементами.]
+    (*
+        <- concept_explanation;;
         <- lang_ru;;
     *);
 <= nrel_inclusion: concept_sc_alphabet;
@@ -259,6 +295,12 @@ concept_sc_arc
     [sc-дуга (ориентированный sc-коннектор) — это класс sc-элементов, представляющих собой ориентированные связки между sc-элементами, являющиеся обозначениями ориентированных sc-пар.]
     (*
         <- concept_definition;;
+        <- lang_ru;;
+    *);
+=> nrel_explanation:
+    [sc-дуга является основным средством задания направленных отношений между элементами SC-кода. Каждая sc-дуга соединяет два sc-элемента и имеет направление от первого элемента ко второму, выражая тем самым ориентированную sc-пару.]
+    (*
+        <- concept_explanation;;
         <- lang_ru;;
     *);
 <= nrel_inclusion: concept_sc_connector;;

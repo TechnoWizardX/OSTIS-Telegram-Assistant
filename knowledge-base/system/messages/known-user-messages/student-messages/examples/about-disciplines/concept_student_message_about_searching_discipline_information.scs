@@ -150,6 +150,9 @@ concept_student_message_about_searching_discipline_information
     расскажи подробнее о;
     подробнее про;
     подробнее о;
+    основы формализации;
+    основы ostis;
+    python библиотеки;
 ];
 => nrel_message_patterns: [
 ];
