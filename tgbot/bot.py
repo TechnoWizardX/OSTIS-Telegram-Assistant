@@ -51,10 +51,9 @@ async def main() -> None:
     dp = Dispatcher()
     loop = asyncio.get_event_loop()
 
-    # Колбэк для SC-подписки — перекидывает ответ из SC (sync) в async event loop
     def handle_reply(tg_id: int, text: str) -> None:
         asyncio.run_coroutine_threadsafe(
-            bot.send_message(chat_id=tg_id, text=text),
+            bot.send_message(chat_id=tg_id, text=text, parse_mode="HTML"),
             loop
         )
 
