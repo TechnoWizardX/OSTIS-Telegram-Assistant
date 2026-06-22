@@ -19,5 +19,6 @@ topic_python_libraries
         <- lang_ru;;
     *);
 => nrel_decomposition: <
-    topic_py_sc_client
+    topic_py_sc_client;
+    topic_py_sc_kpm
 >;;
