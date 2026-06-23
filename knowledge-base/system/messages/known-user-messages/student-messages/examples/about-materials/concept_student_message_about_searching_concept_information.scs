@@ -319,7 +319,7 @@ concept_student_message_about_searching_concept_information
     синтаксическая классификация sc-элементов;
     работа с sc-сервером;
     правила построения;
-    сложный sc-индетификатор;
+    сложный sc-идентификатор;
     простой sc-идентификатор;
 ];
 => nrel_message_patterns: [
