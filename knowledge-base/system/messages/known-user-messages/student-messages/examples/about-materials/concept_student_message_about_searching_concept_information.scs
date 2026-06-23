@@ -165,14 +165,16 @@ ${concept_note}
 @if_concept_definition_found_production <- nrel_reply_production;;
 
 // --- Fourth production: concept information not found
+// NOTE: renamed to @if_concept_info_not_found_production (was @if_concept_information_not_found_production)
+// to avoid collision with concept_examples.scs which defines the same @name with different body
 
-@concept_information_not_found_reply_template = [🤔 Хм, интересный запрос! К сожалению, в моей базе знаний <b>мало информации</b> по этому понятию.
+@concept_info_not_found_reply_template = [🤔 Хм, интересный запрос! К сожалению, в моей базе знаний <b>мало информации</b> по этому понятию.
 
 ❗ Попробуй переформулировать вопрос или задать его немного по-другому.
 
 Возможно, стоит использовать синонимы или описать то, что вас интересует, другими словами. Я обязательно постараюсь найти что-то полезное!];;
 
-@if_concept_information_not_found_production = {
+@if_concept_info_not_found_production = {
     rrel_condition_template: {
         rrel_template: [*
             @input_param1 = (.._concept <-_ concept);;
@@ -182,7 +184,7 @@ ${concept_note}
         }
     } (* <- nrel_search_template;; *);
     rrel_reply_template: {
-		rrel_message_template: @concept_information_not_found_reply_template;
+		rrel_message_template: @concept_info_not_found_reply_template;
         rrel_message_class: concept_system_reply_message_with_question;
         rrel_expected_user_reply_message_classes: {
             {
@@ -196,19 +198,21 @@ ${concept_note}
         }
 	}
 };;
-@if_concept_information_not_found_production <- nrel_reply_production;;
+@if_concept_info_not_found_production <- nrel_reply_production;;
 
-// --- Fifth production: concept not found
+// --- Fifth production: concept not found at all
+// NOTE: renamed to @if_concept_info_not_found_at_all_production (was @if_concept_not_found_production)
+// to avoid collision with concept_examples.scs which defines the same @name with different body
 
-@concept_not_found_reply_template = [🔍 Похоже, этого понятия <b>пока нет</b> в моей базе знаний. 😔
+@concept_info_not_found_at_all_reply_template = [🔍 Похоже, этого понятия <b>пока нет</b> в моей базе знаний. 😔
 
 ❗ Но не переживай — такое случается! Возможно, в термине есть опечатка, или стоит попробовать другую формулировку?
 
 Я всегда готов помочь найти нужную информацию, даже если с первого раза не получилось.];;
 
-@if_concept_not_found_production = {
+@if_concept_info_not_found_at_all_production = {
     rrel_reply_template: {
-		rrel_message_template: @concept_not_found_reply_template;
+		rrel_message_template: @concept_info_not_found_at_all_reply_template;
         rrel_message_class: concept_system_reply_message_with_question;
         rrel_expected_user_reply_message_classes: {
             {
@@ -222,7 +226,7 @@ ${concept_note}
         }
 	}
 };;
-@if_concept_not_found_production <- nrel_reply_production;;
+@if_concept_info_not_found_at_all_production <- nrel_reply_production;;
 
 // ---- Message topic class
 
@@ -256,8 +260,8 @@ concept_student_message_about_searching_concept_information
     @if_concept_definition_explanation_and_note_found_production;
     @if_concept_definition_and_explanation_found_production;
     @if_concept_definition_found_production;
-    @if_concept_information_not_found_production;
-    @if_concept_not_found_production
+    @if_concept_info_not_found_production;
+    @if_concept_info_not_found_at_all_production
 >;
 => nrel_message_keywords: [
     что такое;

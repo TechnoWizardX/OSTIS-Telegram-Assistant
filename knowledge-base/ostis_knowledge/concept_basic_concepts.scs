@@ -18,8 +18,17 @@ sc_code_topic
     sc_text;
     sc_knowledge;
     sc_file;
-    sc_idtf;
-    main_sc_idtf
+    concept_sc_idtf;
+    main_sc_idtf;
+    simple_sc_idtf;
+    complex_sc_idtf;
+    sc_expression;
+    sc_idtf_family;
+    string_sc_idtf;
+    nonstring_sc_idtf;
+    sc_idtf_system;
+    basic_rules_for_constructing_simple_sc_string_identifiers_of_certain_entity_classes_on_the_SCcode;
+    system_sc_id
 };;
 
 

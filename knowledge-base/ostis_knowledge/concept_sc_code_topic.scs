@@ -1,7 +1,7 @@
-sc_syntax_topic
+concept_sc_code_topic
 <- concept_discipline_topic;
 => nrel_main_idtf:
-    [Синтаксис SC-кода]
+    [Основы SC-кода]
     (*
         <- lang_ru;;
     *);

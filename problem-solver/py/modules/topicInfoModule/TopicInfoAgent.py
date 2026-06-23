@@ -83,9 +83,16 @@ class TopicInfoAgent(ScAgentClassic):
         if reply_text:
             self._send_reply(message_link_addr, reply_text)
             self.logger.info(f"TopicInfoAgent: Reply sent: {reply_text[:100]}...")
-
-        finish_action_with_status(action_addr, is_success=True)
-        return ScResult.OK
+            finish_action_with_status(action_addr, is_success=True)
+            return ScResult.OK
+        else:
+            # Python-обработчик не может ответить на этот класс сообщения
+            # (greeting, casual, skills, help, etc.) — пропускаем,
+            # чтобы C++ Nika продукции обработали action
+            self.logger.info(
+                f"TopicInfoAgent: No Python handler for {message_topic_class}, skipping for Nika"
+            )
+            return ScResult.SKIP
 
 
     def _generate_reply(self, message_class: str, entities: dict, message_history: list[str] = None, message: str = None) -> str | None:

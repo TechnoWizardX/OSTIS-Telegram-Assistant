@@ -12,7 +12,7 @@ concept_sc_external_representation
         <- concept_definition;;
         <- lang_ru;;
     *);
-<= nrel_inclusion: sc_syntax_topic;;
+<= nrel_inclusion: concept_sc_code_topic;;
 
 
 concept_scg_code
