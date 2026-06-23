@@ -200,27 +200,6 @@ sc_file
         <- lang_ru;;
     *);;
 
-sc_idtf
-<= nrel_inclusion: concept_basic_concepts;
-<- concept;
-=> nrel_main_idtf:
-    [sc-идентификатор]
-    (*
-        <- lang_ru;;
-    *);
-=> nrel_definition:
-    [sc-идентификатор — файл, являющийся внешним идентификатором (именем) sc-элемента, хранимого в памяти ostis-системы.]
-    (*
-        <- concept_definition;;
-        <- lang_ru;;
-    *);
-=> nrel_explanation:
-    [sc-идентификатор связывает внешний файл с соответствующим элементом SC-кода, обеспечивая его однозначную идентификацию.]
-    (*
-        <- concept_explanation;;
-        <- lang_ru;;
-    *);;
-
 main_sc_idtf
 <= nrel_inclusion: concept_basic_concepts;
 <- concept;
