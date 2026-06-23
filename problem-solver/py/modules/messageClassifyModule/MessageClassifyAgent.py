@@ -63,6 +63,7 @@ class MessageClassifyAgent(ScAgentClassic):
         message_topic_class = classification_result[0]
         if message_topic_class in [
             "concept_student_message_about_searching_all_topics",
+            "concept_student_message_about_searching_concepts",
             "concept_student_message_about_searching_discipline_topic_information",
             "concept_student_message_about_searching_discipline_topics",
             "concept_student_message_about_searching_discipline_information",

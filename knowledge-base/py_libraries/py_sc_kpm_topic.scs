@@ -60,6 +60,31 @@ concept_sckeynodes
     (*
         <- concept_explanation;;
         <- lang_ru;;
+    *);
+=> nrel_example:
+    [<b>Доступ к кейноудам:</b> синтаксис с квадратными скобками (как у словаря) выбрасывает исключение при отсутствии кейноуда; метод .get() возвращает пустой ScAddr.
+
+<pre>from sc_kpm import ScKeynodes
+
+# Безопасный доступ через .get() (возвращает пустой ScAddr)
+student_class = ScKeynodes.get("concept_student")
+if student_class.is_valid():
+    print("Кейноуд concept_student найден")
+
+# Получить кейноуд, зная что он точно есть
+nrel_author = ScKeynodes.get("nrel_message_author")
+if not nrel_author.is_valid():
+    print("Кейноуд не найден в БЗ")
+
+# Создать или получить кейноуд заданного типа
+from sc_client.constants import sc_type
+new_keynode = ScKeynodes.resolve("my_custom_node", sc_type.CONST_NODE)
+
+# Быстрый доступ к ролевым отношениям (rrel_1, rrel_2, ...)
+first_arg_role = ScKeynodes.rrel_index(1)   # rrel_1
+second_arg_role = ScKeynodes.rrel_index(2)  # rrel_2</pre>]
+    (*
+        <- concept_example;;
     *);;
 
 
@@ -92,6 +117,36 @@ concept_sc_agent_classic
     (*
         <- concept_explanation;;
         <- lang_ru;;
+    *);
+=> nrel_example:
+    [<pre>from sc_kpm import ScAgentClassic, ScResult
+from sc_kpm.utils.action_utils import (
+    get_action_arguments,
+    finish_action_with_status
+)
+from sc_client.models import ScAddr
+
+class MyCustomAgent(ScAgentClassic):
+    def __init__(self):
+        # Регистрируем агента на action-класс "my_action"
+        super().__init__("my_action")
+
+    def on_event(self, src: ScAddr, connector: ScAddr,
+                 action_addr: ScAddr) -> ScResult:
+        # Получаем первый аргумент действия
+        args = get_action_arguments(action_addr, 1)
+        arg1 = next(iter(args))
+
+        if not arg1.is_valid():
+            finish_action_with_status(action_addr, is_success=False)
+            return ScResult.SKIP
+
+        # ... выполняем полезную работу ...
+
+        finish_action_with_status(action_addr, is_success=True)
+        return ScResult.OK</pre>]
+    (*
+        <- concept_example;;
     *);;
 
 
@@ -124,6 +179,33 @@ concept_sc_server_module
     (*
         <- concept_explanation;;
         <- lang_ru;;
+    *);
+=> nrel_example:
+    [<pre>from sc_kpm import ScServer, ScModule
+from sc_kpm import ScAgentClassic, ScResult
+
+# Определяем модуль — контейнер для группы агентов
+class MessageModule(ScModule):
+    def __init__(self):
+        super().__init__(
+            MyMessageAgent(),
+            MyReplyAgent(),
+        )
+
+# Создаём сервер и запускаем
+server = ScServer("ws://localhost:8090")
+
+with server.connect():
+    # Добавляем модули на сервер
+    server.add_modules(
+        MessageModule(),
+    )
+    # Регистрируем всех агентов из модулей
+    with server.register_modules():
+        # Блокирующий вызов — ждёт сигнала остановки
+        server.serve()</pre>]
+    (*
+        <- concept_example;;
     *);;
 
 
@@ -156,6 +238,40 @@ concept_sc_kpm_utils
     (*
         <- concept_explanation;;
         <- lang_ru;;
+    *);
+=> nrel_example:
+    [<pre>from sc_kpm.utils import (
+    generate_node, generate_link, generate_connector,
+    generate_non_role_relation, generate_role_relation,
+    search_element_by_non_role_relation,
+    get_link_content_data, get_element_system_identifier
+)
+from sc_kpm import ScKeynodes
+from sc_client.constants import sc_type
+
+# Создать узел одной строкой (без ScConstruction!)
+user_node = generate_node(sc_type.CONST_NODE)
+
+# Создать ссылку с текстом одной строкой
+msg_link = generate_link("Привет, Ника!")
+
+# Установить не-ролевое отношение (автор сообщения)
+# Создаёт: user --COMMON_ARC--> msg  и  nrel_message_author --PERM_POS--> arc
+generate_non_role_relation(
+    msg_link, user_node,
+    ScKeynodes.get("nrel_message_author")
+)
+
+# Найти элемент по не-ролевому отношению
+main_name = search_element_by_non_role_relation(
+    user_node, ScKeynodes.get("nrel_main_idtf")
+)
+name_text = get_link_content_data(main_name)  # строка
+
+# Получить системный идентификатор элемента
+class_name = get_element_system_identifier(user_node)  # напр. "concept_user"</pre>]
+    (*
+        <- concept_example;;
     *);;
 
 
@@ -188,4 +304,35 @@ concept_action_utils
     (*
         <- concept_explanation;;
         <- lang_ru;;
+    *);
+=> nrel_example:
+    [<pre>from sc_kpm.utils.action_utils import (
+    generate_action,
+    get_action_arguments,
+    finish_action_with_status
+)
+from sc_kpm.utils import generate_role_relation
+from sc_kpm import ScKeynodes
+from sc_client.models import ScAddr
+
+# 1. Создать action-узел (запрос на обработку)
+action = generate_action("message_classify_action")
+
+# 2. Привязать аргументы к действию
+message_addr = ScAddr(12345)  # адрес сообщения
+generate_role_relation(
+    action, message_addr,
+    ScKeynodes.rrel_index(1)  # rrel_1 — первый аргумент
+)
+
+# 3. Агент извлекает аргументы
+args = get_action_arguments(action, 1)
+first_arg = next(iter(args))  # первый аргумент — message_addr
+
+# 4. Завершить действие с отметкой успеха
+finish_action_with_status(action, is_success=True)
+# Теперь в БЗ: action <- action_finished;;
+#              action <- action_finished_successfully;;</pre>]
+    (*
+        <- concept_example;;
     *);;

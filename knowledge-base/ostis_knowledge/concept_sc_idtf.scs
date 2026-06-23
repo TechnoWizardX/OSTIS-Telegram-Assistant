@@ -1,5 +1,6 @@
 concept_sc_idtf
 <- sc_node_class;
+<- concept;
 => nrel_main_idtf:
     [SC-идентификатор]
     (*
@@ -11,10 +12,10 @@ concept_sc_idtf
         <- concept_definition;;
         <- lang_ru;;
     *);
-=>  nrel_note:
+=> nrel_note:
     [sc-идентификаторы необходимы ostis-системе исключительно для того, чтобы осуществлять обмен информацией с другими системами и со своими пользователями (например, чтобы пояснять смысл sc-конструкций).]
     (*
-        <- concept_explanation;;
+        <- concept_note;;
         <- lang_ru;;
     *);
 => nrel_specification:
@@ -69,7 +70,6 @@ concept_sc_idtf
             <- concept;;
 
     *);
-    <- concept;
 =>nrel_inclusion:
    sc_expression
     (*
@@ -83,11 +83,9 @@ concept_sc_idtf
             (*
             <- concept_definition;;
             <- lang_ru;;
-            *);;
-            <- concept;;
+            *);;                <- concept;;
 
     *);
-<- concept;
 =>nrel_inclusion:
   main_sc_idtf
   (*

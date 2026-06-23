@@ -58,6 +58,23 @@ concept_work_with_sc_server
     (*
         <- concept_explanation;;
         <- lang_ru;;
+    *);
+=> nrel_example:
+    [<pre>from sc_client.client import connect, disconnect, is_connected
+
+# Подключаемся к локальному sc-серверу
+connect("ws://localhost:8090")
+
+# Проверяем состояние подключения
+if is_connected():
+    print("Подключение установлено — можно работать с базой знаний")
+
+# ... выполняем операции со sc-памятью ...
+
+# Завершаем работу — отключаемся
+disconnect()</pre>]
+    (*
+        <- concept_example;;
     *);;
 
 
@@ -90,6 +107,25 @@ concept_scaddr
     (*
         <- concept_explanation;;
         <- lang_ru;;
+    *);
+=> nrel_example:
+    [<pre>from sc_client.models import ScAddr
+
+# Пустой адрес — элемент не существует
+empty = ScAddr()
+print(empty.is_valid())  # False
+
+# Адрес, полученный при создании или поиске элемента
+# (здесь условный пример — реальный адрес возвращает generate_elements)
+addr = ScAddr(12345)
+print(addr.is_valid())   # True — такой элемент есть в памяти
+print(addr.value)        # 12345 — числовое значение адреса
+
+# Проверка через bool (сокращённая запись)
+if addr:
+    print("Элемент существует")</pre>]
+    (*
+        <- concept_example;;
     *);;
 
 
@@ -122,6 +158,25 @@ concept_sctype
     (*
         <- concept_explanation;;
         <- lang_ru;;
+    *);
+=> nrel_example:
+    [<pre>from sc_client.constants import sc_type
+
+# КОНСТАНТНЫЕ типы — для СОЗДАНИЯ элементов
+node_type = sc_type.CONST_NODE           # постоянный узел
+link_type = sc_type.CONST_NODE_LINK      # постоянная ссылка
+arc_type = sc_type.CONST_PERM_POS_ARC    # постоянная атрибутивная дуга
+
+# ПЕРЕМЕННЫЕ типы — для ПОИСКА (шаблоны)
+var_node = sc_type.VAR_NODE              # "найди любой узел"
+var_link = sc_type.VAR_NODE_LINK         # "найди ссылку"
+var_common = sc_type.VAR_COMMON_ARC      # "найди дугу-ребро"
+var_perm = sc_type.VAR_PERM_POS_ARC      # "найди атрибутивную дугу"
+
+# В шаблонах переменный тип можно совмещать с псевдонимом:
+# sc_type.VAR_NODE >> "_my_alias"</pre>]
+    (*
+        <- concept_example;;
     *);;
 
 
@@ -154,6 +209,32 @@ concept_scconstruction
     (*
         <- concept_explanation;;
         <- lang_ru;;
+    *);
+=> nrel_example:
+    [<pre>from sc_client.client import generate_elements
+from sc_client.constants import sc_type
+from sc_client.models import ScConstruction, ScLinkContent, ScLinkContentType
+
+# Создаём конструктор — нашу "корзину" элементов
+construct = ScConstruction()
+
+# Добавляем ссылку с текстом
+construct.generate_link(
+    sc_type.CONST_NODE_LINK,
+    ScLinkContent("Привет, мир!", ScLinkContentType.STRING),
+    "_my_message"
+)
+
+# Добавляем узел
+construct.generate_node(sc_type.CONST_NODE, "_my_node")
+
+# Выполняем создание всех элементов за один запрос
+# generate_elements возвращает список ScAddr в порядке объявления
+message_addr, node_addr = generate_elements(construct)
+
+print("Сообщение:", message_addr, "Узел:", node_addr)</pre>]
+    (*
+        <- concept_example;;
     *);;
 
 
@@ -186,6 +267,39 @@ concept_sctemplate
     (*
         <- concept_explanation;;
         <- lang_ru;;
+    *);
+=> nrel_example:
+    [<pre>from sc_client.client import search_by_template, generate_by_template
+from sc_client.constants import sc_type
+from sc_client.models import ScTemplate
+from sc_kpm import ScKeynodes
+
+# ПРИМЕР 1 — Триплет: найти все элементы класса concept_student
+template = ScTemplate()
+template.triple(
+    ScKeynodes.get("concept_student"),   # источник: класс
+    sc_type.VAR_PERM_POS_ARC,           # дуга принадлежности
+    sc_type.VAR_NODE >> "_student"      # цель: переменный узел
+)
+results = search_by_template(template)
+for r in results:
+    student = r.get("_student")
+    print("Найден студент:", student)
+
+# ПРИМЕР 2 — Квинтупль: найти автора сообщения
+template = ScTemplate()
+template.quintuple(
+    message_addr,                       # источник: конкретное сообщение
+    sc_type.VAR_COMMON_ARC,             # позиция 2 — ВСЕГДА COMMON (ребро)
+    sc_type.VAR_NODE >> "_author",      # цель: переменный автор
+    sc_type.VAR_PERM_POS_ARC,           # позиция 4 — ВСЕГДА PERM_POS (атрибут)
+    ScKeynodes.get("nrel_message_author") # отношение
+)
+results = search_by_template(template)
+first = next(iter(results))
+author = first.get("_author")</pre>]
+    (*
+        <- concept_example;;
     *);;
 
 
@@ -224,6 +338,28 @@ concept_sc_type_usage_in_templates
     (*
         <- concept_note;;
         <- lang_ru;;
+    *);
+=> nrel_example:
+    [<b>ПРАВИЛЬНЫЙ квинтупль</b> — поиск основного идентификатора сущности:
+<pre>template.quintuple(
+    entity_addr,                         # 1. источник
+    sc_type.VAR_COMMON_ARC,              # 2. ВСЕГДА COMMON (ребро)
+    sc_type.VAR_NODE_LINK >> "_idtf",    # 3. цель
+    sc_type.VAR_PERM_POS_ARC,            # 4. ВСЕГДА PERM_POS (атрибут)
+    ScKeynodes.get("nrel_main_idtf")     # 5. отношение
+)</pre>
+
+<b>НЕПРАВИЛЬНО</b> — перепутаны позиции 2 и 4 (ошибка №1 у новичков!):
+<pre>template.quintuple(
+    entity_addr,
+    sc_type.VAR_PERM_POS_ARC,           # ОШИБКА - здесь должен быть COMMON
+    sc_type.VAR_NODE_LINK >> "_idtf",
+    sc_type.VAR_COMMON_ARC,             # ОШИБКА - здесь должен быть PERM_POS
+    ScKeynodes.get("nrel_main_idtf")
+)
+# Такой шаблон НИЧЕГО не найдёт.</pre>]
+    (*
+        <- concept_example;;
     *);;
 
 
@@ -256,6 +392,34 @@ concept_sc_link_content
     (*
         <- concept_explanation;;
         <- lang_ru;;
+    *);
+=> nrel_example:
+    [<pre>from sc_client.client import get_link_content, search_links_by_contents
+from sc_client.constants import sc_type
+from sc_client.models import ScConstruction, ScLinkContent, ScLinkContentType
+
+# ЧТЕНИЕ ссылки
+content_list = get_link_content(link_addr)
+if content_list:
+    first_content = next(iter(content_list))
+    text = first_content.data          # извлекаем строку/число
+    content_type = first_content.type  # STRING, INT или FLOAT
+    print("Содержимое ссылки:", text)
+
+# ПОИСК ссылок по содержимому
+# Внимание: возвращает двойной список адресов!
+links_result = search_links_by_contents("николай")
+for batch in links_result:            # внешний список (группы)
+    for link_addr in batch:           # внутренний список (адреса)
+        if link_addr.is_valid():
+            print("Найдена ссылка:", link_addr)
+
+# ТИПЫ данных ссылок:
+# ScLinkContentType.STRING — строка
+# ScLinkContentType.INT    — целое число
+# ScLinkContentType.FLOAT  — число с плавающей точкой</pre>]
+    (*
+        <- concept_example;;
     *);;
 
 
@@ -283,4 +447,28 @@ concept_sc_event_subscription
     (*
         <- concept_explanation;;
         <- lang_ru;;
+    *);
+=> nrel_example:
+    [<pre>from sc_client.client import create_elementary_event_subscriptions
+from sc_client.constants.common import ScEventType
+from sc_client.models import ScEventSubscriptionParams
+from sc_kpm import ScKeynodes
+
+# Определяем колбэк — что делать при наступлении события
+def on_reply_added(subscribed_addr, arc_addr, connector_addr):
+    print("Создана дуга ответа:", arc_addr)
+    # Здесь можно найти текст ответа и отправить его пользователю
+
+# Параметры подписки: за каким элементом следим, тип события, колбэк
+params = ScEventSubscriptionParams(
+    ScKeynodes.get("nrel_reply_to_message"),  # наблюдаемый элемент
+    ScEventType.AFTER_GENERATE_OUTGOING_ARC,  # тип события
+    on_reply_added                             # функция-обработчик
+)
+
+# Создаём подписку (активируется сразу)
+subscriptions = create_elementary_event_subscriptions(params)
+# Теперь при каждой новой дуге reply_to_message вызовется on_reply_added</pre>]
+    (*
+        <- concept_example;;
     *);;

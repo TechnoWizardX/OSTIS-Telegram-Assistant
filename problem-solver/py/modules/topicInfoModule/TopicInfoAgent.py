@@ -92,6 +92,8 @@ class TopicInfoAgent(ScAgentClassic):
         """Генерирует ответ в зависимости от класса сообщения"""
         if message_class == "concept_student_message_about_searching_all_topics":
             return self._handle_all_topics()
+        elif message_class == "concept_student_message_about_searching_concepts":
+            return self._handle_all_concepts()
         elif message_class == "concept_student_message_about_searching_discipline_topic_information":
             topic_name = entities.get("concept_discipline_topic", "")
             return self._handle_topic_information(topic_name, message_history)
@@ -120,6 +122,51 @@ class TopicInfoAgent(ScAgentClassic):
             f"Вот темы, которые я знаю:\n{topics_str}\n\n"
             f"Чтобы узнать подробнее, спроси «что ты знаешь по теме <название>»."
         )
+
+    def _handle_all_concepts(self) -> str:
+        """Список всех понятий, сгруппированных по темам"""
+        # Собираем все темы с их ключевыми понятиями
+        template = ScTemplate()
+        template.triple(
+            ScKeynodes["concept_discipline_topic"],
+            sc_type.VAR_POS_ARC,
+            sc_type.VAR_NODE >> "topic"
+        )
+        results = search_by_template(template)
+
+        if not results:
+            return "Я пока не знаю никаких понятий."
+
+        topic_blocks = []
+        total_concepts = 0
+
+        for r in results:
+            topic_addr = r.get("topic")
+            topic_name = self._get_main_idtf(topic_addr)
+            if not topic_name:
+                continue
+
+            concept_names = self._get_key_concepts_names(topic_addr)
+            if not concept_names:
+                continue
+
+            total_concepts += len(concept_names)
+            concepts_str = "\n".join([f"  • {name}" for name in concept_names])
+            topic_blocks.append(f"📌 {topic_name}:\n{concepts_str}")
+
+        if not topic_blocks:
+            return "Я пока не знаю никаких понятий."
+
+        # Сортируем блоки тем по алфавиту
+        topic_blocks.sort()
+
+        header = f"📚 Вот понятия, которые я знаю (всего {total_concepts}):\n"
+        body = "\n\n".join(topic_blocks)
+        footer = (
+            "\n\nЧтобы узнать подробнее о понятии, спроси "
+            "«что такое <название понятия>» или «расскажи про <понятие>»."
+        )
+        return header + body + footer
 
     def _handle_topic_information(self, topic_name: str, message_history: list[str] = None) -> str:
         """Информация по теме — с учётом контекста дисциплины из истории"""
@@ -348,10 +395,9 @@ class TopicInfoAgent(ScAgentClassic):
                     # Точное совпадение или вхождение
                     if t_lower == name_lower or name_lower in t_lower:
                         return addr
-            # Не нашли в контексте — не ищем глобально, чтобы не получить тему из другой дисциплины
-            return ScAddr()
+            # Не нашли в контексте дисциплины — пробуем глобальный поиск
 
-        # 2. Глобальный поиск (только если нет контекста)
+        # 2. Глобальный поиск
         return self._find_entity_by_name("concept_discipline_topic", topic_name)
 
     @staticmethod
