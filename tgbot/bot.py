@@ -33,12 +33,12 @@ llm: LLMHelper | None = None  # инициализируется в main()
 async def start_command_handler(message: Message) -> None:
     await message.answer(
         "Привет! Я бот OSTIS Assistant.\n\n"
-        "Чтобы задать вопрос про понятия OSTIS / SC-кода или про правила "
-        "написания SCs — используй команду:\n"
+        "Отправь интересующий тебя вопрос, и тебе ответит NIKA\n"
+        "Если нужно что то подробнее разобрать, задавай свой вопрос LLM:\n"
         "/askai <вопрос>\n\n"
-        "Например: /askai что такое sc-элемент?\n\n"
+        "Например: /askai сделай больше примеров по SCs-коду\n\n"
         "Другие команды:\n"
-        "/clear — очистить историю нашего диалога\n"
+        "/clear — очистить историю диалога с LLM\n"
     )
 
 
@@ -75,8 +75,7 @@ async def default_message_handler(message: Message) -> None:
         logger.warning("Не удалось отправить сообщение в sc-machine: %s", exc)
 
     await message.answer(
-        "ℹ️ Чтобы задать вопрос ассистенту, используй команду:\n"
-        "/askai <твой вопрос>"
+        "Подождите, NIKA сейчас ответит..."
     )
 
 
