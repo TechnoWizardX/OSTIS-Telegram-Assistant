@@ -1,0 +1,670 @@
+// ============================================================================
+// Тесты для учебного плана — вопросы с вариантами ответов по дням 1-7
+// ============================================================================
+
+// ---------------------------------------------------------------------------
+// День 1: Философия и архитектура OSTIS
+// ---------------------------------------------------------------------------
+@test_day_1_reply_template = [📝 <b>Тест: День 1 — Философия и архитектура OSTIS</b>
+
+<i>Проверь свои знания! Выбери правильный ответ на каждый вопрос.</i>
+
+<b>Вопрос 1:</b> Из скольких ключевых компонентов состоит архитектура OSTIS?
+1️⃣ 2
+2️⃣ 3
+3️⃣ 4
+4️⃣ 5
+
+<b>Вопрос 2:</b> Какая главная проблема современных гибридных интеллектуальных систем?
+1️⃣ Они слишком быстрые
+2️⃣ Они монолитны — сложны в модификации, компоненты почти невозможно повторно использовать
+3️⃣ У них плохой пользовательский интерфейс
+4️⃣ Они требуют слишком много памяти
+
+<b>Вопрос 3:</b> Что означает принцип Plug & Play в контексте OSTIS?
+1️⃣ Компоненты нужно подключать вручную
+2️⃣ Любая модель может быть легко интегрирована без дополнительных затрат
+3️⃣ Система сама выбирает нужные компоненты
+4️⃣ Компоненты нельзя заменять
+
+<b>Вопрос 4:</b> База знаний в архитектуре OSTIS — это:
+1️⃣ Хранилище файлов на диске
+2️⃣ Компонент, описывающий любые виды знаний, легко дополняется
+3️⃣ Реляционная база данных
+4️⃣ Набор текстовых документов
+
+<b>Вопрос 5:</b> OSTIS — это технология с открытым исходным кодом для:
+1️⃣ Только баз данных
+2️⃣ Совместимых интеллектуальных систем нового поколения
+3️⃣ Графических редакторов
+4️⃣ Веб-разработки
+
+💡 <i>Если сомневаешься в ответах — перечитай материалы Дня 1 командой «покажи День 1»</i>];;
+
+@if_test_day_1_production = {
+    rrel_reply_template: {
+        rrel_message_template: @test_day_1_reply_template;
+        rrel_message_class: concept_system_reply_message_with_question;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_message_about_searching_studied_disciplines;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            }
+        }
+    }
+};;
+@if_test_day_1_production <- nrel_reply_production;;
+
+concept_student_message_about_test_day1
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе теста Дня 1]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [показать тест Дня 1]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+    *);
+=> nrel_example:
+    [Тест День 1]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_test_day_1_production
+>;
+=> nrel_message_keywords: [
+    тест день 1;
+    тест день первый;
+    тест первый день;
+    тест 1 день;
+    тест 1;
+    проверка день 1;
+    проверка 1;
+    проверь день 1;
+    проверь 1;
+    test day 1;
+    test 1
+];;
+
+// ---------------------------------------------------------------------------
+// День 2: Анатомия SC-кода — Базовые элементы
+// ---------------------------------------------------------------------------
+@test_day_2_reply_template = [📝 <b>Тест: День 2 — Анатомия SC-кода. Базовые элементы</b>
+
+<i>Проверь свои знания! Выбери правильный ответ на каждый вопрос.</i>
+
+<b>Вопрос 1:</b> SC-код (Semantic Computer Code) — это:
+1️⃣ Язык программирования
+2️⃣ Универсальный формальный язык смыслового представления знаний
+3️⃣ Графический редактор
+4️⃣ Система управления базами данных
+
+<b>Вопрос 2:</b> Что является атомарной единицей SC-кода?
+1️⃣ sc-конструкция
+2️⃣ sc-множество
+3️⃣ sc-элемент
+4️⃣ sc-структура
+
+<b>Вопрос 3:</b> Какая иерархия элементов SC-кода верна?
+1️⃣ sc-элемент → sc-множество → sc-структура → sc-конструкция
+2️⃣ sc-элемент → sc-конструкция → sc-множество → sc-структура
+3️⃣ sc-конструкция → sc-элемент → sc-множество
+4️⃣ sc-структура → sc-множество → sc-конструкция
+
+<b>Вопрос 4:</b> sc-структура — это:
+1️⃣ Множество sc-элементов
+2️⃣ Множество sc-элементов со связками между ними
+3️⃣ Один sc-элемент
+4️⃣ Файл на диске
+
+<b>Вопрос 5:</b> Каждый sc-элемент является обозначением:
+1️⃣ Числа
+2️⃣ Множества
+3️⃣ Строки
+4️⃣ Файла
+
+💡 <i>Если сомневаешься в ответах — перечитай материалы Дня 2 командой «покажи День 2»</i>];;
+
+@if_test_day_2_production = {
+    rrel_reply_template: {
+        rrel_message_template: @test_day_2_reply_template;
+        rrel_message_class: concept_system_reply_message_with_question;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_message_about_searching_studied_disciplines;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            }
+        }
+    }
+};;
+@if_test_day_2_production <- nrel_reply_production;;
+
+concept_student_message_about_test_day2
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе теста Дня 2]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [показать тест Дня 2]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+    *);
+=> nrel_example:
+    [Тест День 2]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_test_day_2_production
+>;
+=> nrel_message_keywords: [
+    тест день 2;
+    тест день второй;
+    тест второй день;
+    тест 2 день;
+    тест 2;
+    проверка день 2;
+    проверка 2;
+    проверь день 2;
+    проверь 2;
+    test day 2;
+    test 2
+];;
+
+// ---------------------------------------------------------------------------
+// День 3: От конструкций к знаниям
+// ---------------------------------------------------------------------------
+@test_day_3_reply_template = [📝 <b>Тест: День 3 — От конструкций к знаниям</b>
+
+<i>Проверь свои знания! Выбери правильный ответ на каждый вопрос.</i>
+
+<b>Вопрос 1:</b> sc-текст — это:
+1️⃣ Строка символов в текстовом файле
+2️⃣ Связная семантически корректная sc-структура
+3️⃣ Набор несвязанных sc-элементов
+4️⃣ Текстовый документ
+
+<b>Вопрос 2:</b> Что НЕ является sc-конструкцией?
+1️⃣ sc-элемент
+2️⃣ sc-множество
+3️⃣ Файл
+4️⃣ sc-структура
+
+<b>Вопрос 3:</b> sc-идентификатор — это:
+1️⃣ Числовой адрес элемента в памяти
+2️⃣ Файл, являющийся внешним именем sc-элемента
+3️⃣ Язык программирования
+4️⃣ Тип данных
+
+<b>Вопрос 4:</b> Основной sc-идентификатор — это:
+1️⃣ Случайное имя, присвоенное элементу
+2️⃣ sc-идентификатор, взаимно однозначно соответствующий sc-элементу
+3️⃣ Адрес элемента в оперативной памяти
+4️⃣ Тип sc-элемента
+
+<b>Вопрос 5:</b> Для чего нужны sc-идентификаторы системе?
+1️⃣ Для внутренней работы и вычислений
+2️⃣ Исключительно для обмена информацией с пользователями
+3️⃣ Для хранения данных на диске
+4️⃣ Для оптимизации запросов
+
+💡 <i>Если сомневаешься в ответах — перечитай материалы Дня 3 командой «покажи День 3»</i>];;
+
+@if_test_day_3_production = {
+    rrel_reply_template: {
+        rrel_message_template: @test_day_3_reply_template;
+        rrel_message_class: concept_system_reply_message_with_question;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_message_about_searching_studied_disciplines;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            }
+        }
+    }
+};;
+@if_test_day_3_production <- nrel_reply_production;;
+
+concept_student_message_about_test_day3
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе теста Дня 3]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [показать тест Дня 3]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+    *);
+=> nrel_example:
+    [Тест День 3]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_test_day_3_production
+>;
+=> nrel_message_keywords: [
+    тест день 3;
+    тест день третий;
+    тест третий день;
+    тест 3 день;
+    тест 3;
+    проверка день 3;
+    проверка 3;
+    проверь день 3;
+    проверь 3;
+    test day 3;
+    test 3
+];;
+
+// ---------------------------------------------------------------------------
+// День 4: Синтаксис Ядра — Алфавит и SC-узлы
+// ---------------------------------------------------------------------------
+@test_day_4_reply_template = [📝 <b>Тест: День 4 — Синтаксис Ядра. Алфавит и SC-узлы</b>
+
+<i>Проверь свои знания! Выбери правильный ответ на каждый вопрос.</i>
+
+<b>Вопрос 1:</b> Сколько классов в Алфавите Ядра SC-кода?
+1️⃣ 3
+2️⃣ 5
+3️⃣ 7
+4️⃣ 10
+
+<b>Вопрос 2:</b> На какие два типа делятся sc-узлы по типу?
+1️⃣ Большие и маленькие
+2️⃣ Не являющиеся знаком файла и являющиеся знаком файла
+3️⃣ Постоянные и временные
+4️⃣ Позитивные и негативные
+
+<b>Вопрос 3:</b> По постоянству sc-узлы делятся на:
+1️⃣ Большие и маленькие
+2️⃣ Константные и переменные
+3️⃣ Активные и пассивные
+4️⃣ Явные и неявные
+
+<b>Вопрос 4:</b> Синтаксическая классификация sc-элементов делит их на:
+1️⃣ sc-узел и sc-коннектор
+2️⃣ sc-множество и sc-структуру
+3️⃣ sc-текст и sc-знание
+4️⃣ sc-дугу и sc-ребро
+
+<b>Вопрос 5:</b> sc-узел — это класс sc-элементов, представляющих:
+1️⃣ Связи между элементами
+2️⃣ Узлы SC-кода (обозначения множеств)
+3️⃣ Файлы на диске
+4️⃣ Внешние идентификаторы
+
+💡 <i>Если сомневаешься в ответах — перечитай материалы Дня 4 командой «покажи День 4»</i>];;
+
+@if_test_day_4_production = {
+    rrel_reply_template: {
+        rrel_message_template: @test_day_4_reply_template;
+        rrel_message_class: concept_system_reply_message_with_question;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_message_about_searching_studied_disciplines;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            }
+        }
+    }
+};;
+@if_test_day_4_production <- nrel_reply_production;;
+
+concept_student_message_about_test_day4
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе теста Дня 4]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [показать тест Дня 4]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+    *);
+=> nrel_example:
+    [Тест День 4]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_test_day_4_production
+>;
+=> nrel_message_keywords: [
+    тест день 4;
+    тест день четвёртый;
+    тест день четвертый;
+    тест четвёртый день;
+    тест четвертый день;
+    тест 4 день;
+    тест 4;
+    проверка день 4;
+    проверка 4;
+    проверь день 4;
+    проверь 4;
+    test day 4;
+    test 4
+];;
+
+// ---------------------------------------------------------------------------
+// День 5: Синтаксис Ядра — SC-коннекторы
+// ---------------------------------------------------------------------------
+@test_day_5_reply_template = [📝 <b>Тест: День 5 — Синтаксис Ядра. SC-коннекторы</b>
+
+<i>Проверь свои знания! Выбери правильный ответ на каждый вопрос.</i>
+
+<b>Вопрос 1:</b> sc-коннекторы — это класс sc-элементов, представляющих:
+1️⃣ Узлы SC-кода
+2️⃣ Обозначения sc-пар (связок между элементами)
+3️⃣ Файлы на диске
+4️⃣ Внешние идентификаторы
+
+<b>Вопрос 2:</b> sc-ребро — это:
+1️⃣ Ориентированный коннектор
+2️⃣ Неориентированный коннектор
+3️⃣ Тип sc-узла
+4️⃣ Тип идентификатора
+
+<b>Вопрос 3:</b> Какие два основных вида sc-дуг по типу?
+1️⃣ Явные и неявные
+2️⃣ Общего вида и основного вида (принадлежности)
+3️⃣ Большие и малые
+4️⃣ Внешние и внутренние
+
+<b>Вопрос 4:</b> Какие бывают типы модальности sc-дуг принадлежности?
+1️⃣ Только позитивные
+2️⃣ Позитивные, негативные и нечёткие (fuzzy)
+3️⃣ Только негативные
+4️⃣ Постоянные и временные
+
+<b>Вопрос 5:</b> nrel_incidence — это:
+1️⃣ Отношение принадлежности классу
+2️⃣ Отношение инцидентности обозначений sc-пар с их элементами
+3️⃣ Тип sc-узла
+4️⃣ Один из видов идентификаторов
+
+💡 <i>Если сомневаешься в ответах — перечитай материалы Дня 5 командой «покажи День 5»</i>];;
+
+@if_test_day_5_production = {
+    rrel_reply_template: {
+        rrel_message_template: @test_day_5_reply_template;
+        rrel_message_class: concept_system_reply_message_with_question;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_message_about_searching_studied_disciplines;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            }
+        }
+    }
+};;
+@if_test_day_5_production <- nrel_reply_production;;
+
+concept_student_message_about_test_day5
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе теста Дня 5]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [показать тест Дня 5]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+    *);
+=> nrel_example:
+    [Тест День 5]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_test_day_5_production
+>;
+=> nrel_message_keywords: [
+    тест день 5;
+    тест день пятый;
+    тест пятый день;
+    тест 5 день;
+    тест 5;
+    проверка день 5;
+    проверка 5;
+    проверь день 5;
+    проверь 5;
+    test day 5;
+    test 5
+];;
+
+// ---------------------------------------------------------------------------
+// День 6: Внешний мир — Идентификаторы и языки
+// ---------------------------------------------------------------------------
+@test_day_6_reply_template = [📝 <b>Тест: День 6 — Внешний мир. Идентификаторы и языки</b>
+
+<i>Проверь свои знания! Выбери правильный ответ на каждый вопрос.</i>
+
+<b>Вопрос 1:</b> Какие три формы внешнего представления SC-кода существуют?
+1️⃣ HTML, CSS, JavaScript
+2️⃣ SCg, SCs, SCn
+3️⃣ XML, JSON, YAML
+4️⃣ PNG, JPG, GIF
+
+<b>Вопрос 2:</b> Системный sc-идентификатор уникален:
+1️⃣ В рамках одного естественного языка
+2️⃣ В рамках всей базы знаний Экосистемы OSTIS
+3️⃣ Только в одном SCs-файле
+4️⃣ Нигде не уникален
+
+<b>Вопрос 3:</b> Простой sc-идентификатор:
+1️⃣ Содержит идентификаторы других элементов
+2️⃣ Не содержит идентификаторов других элементов
+3️⃣ Всегда является строковым
+4️⃣ Всегда является числовым
+
+<b>Вопрос 4:</b> SCg-код — это:
+1️⃣ Строковое (линейное) представление
+2️⃣ Графическое представление в виде рисунков
+3️⃣ Гипертекстовое представление
+4️⃣ Программный код на Python
+
+<b>Вопрос 5:</b> SCn-код — это представление, максимально приближенное к:
+1️⃣ Машинному коду
+2️⃣ Естественному языку
+3️⃣ Графическим схемам
+4️⃣ Числовым данным
+
+💡 <i>Если сомневаешься в ответах — перечитай материалы Дня 6 командой «покажи День 6»</i>];;
+
+@if_test_day_6_production = {
+    rrel_reply_template: {
+        rrel_message_template: @test_day_6_reply_template;
+        rrel_message_class: concept_system_reply_message_with_question;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_message_about_searching_studied_disciplines;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            }
+        }
+    }
+};;
+@if_test_day_6_production <- nrel_reply_production;;
+
+concept_student_message_about_test_day6
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе теста Дня 6]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [показать тест Дня 6]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+    *);
+=> nrel_example:
+    [Тест День 6]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_test_day_6_production
+>;
+=> nrel_message_keywords: [
+    тест день 6;
+    тест день шестой;
+    тест шестой день;
+    тест 6 день;
+    тест 6;
+    проверка день 6;
+    проверка 6;
+    проверь день 6;
+    проверь 6;
+    test day 6;
+    test 6
+];;
+
+// ---------------------------------------------------------------------------
+// День 7: Практикум формализации и экосистема
+// ---------------------------------------------------------------------------
+@test_day_7_reply_template = [📝 <b>Тест: День 7 — Практикум формализации и экосистема</b>
+
+<i>Проверь свои знания! Выбери правильный ответ на каждый вопрос.</i>
+
+<b>Вопрос 1:</b> Что входит в стек технологий OSTIS Platform?
+1️⃣ Только sc-memory
+2️⃣ sc-memory, Python API, TypeScript API, scp-machine, интерпретатор интерфейсов и другие
+3️⃣ Только редактор базы знаний
+4️⃣ Только плагин для VS Code
+
+<b>Вопрос 2:</b> Системные sc-идентификаторы рекомендуется формировать на основе:
+1️⃣ Русских слов
+2️⃣ Англоязычных идентификаторов
+3️⃣ Случайных символов
+4️⃣ Только цифр
+
+<b>Вопрос 3:</b> Алфавит системных sc-идентификаторов:
+1️⃣ Включает пробелы и спецсимволы
+2️⃣ Максимально упрощён — без пробелов и спецсимволов
+3️⃣ Включает любые символы Unicode
+4️⃣ Состоит только из цифр
+
+<b>Вопрос 4:</b> OSTIS Standard — это:
+1️⃣ Компилятор SC-кода
+2️⃣ Стандарт технологии OSTIS
+3️⃣ Язык программирования
+4️⃣ Графический редактор
+
+<b>Вопрос 5:</b> Итоговое упражнение интенсива:
+1️⃣ Написать программу на Python
+2️⃣ Декомпозиция предметной области на узлы, дуги принадлежности и идентификаторы
+3️⃣ Установить и настроить OSTIS
+4️⃣ Прочитать всю документацию
+
+💡 <i>Поздравляю с завершением интенсива! 🚀 Если сомневаешься в ответах — перечитай материалы Дня 7 командой «покажи День 7»</i>];;
+
+@if_test_day_7_production = {
+    rrel_reply_template: {
+        rrel_message_template: @test_day_7_reply_template;
+        rrel_message_class: concept_system_reply_message_with_question;
+        rrel_expected_user_reply_message_classes: {
+            {
+                rrel_reply_message_class: concept_student_message_about_searching_studied_disciplines;
+                rrel_context_message_class: concept_student_message_about_searching_discipline_information
+            }
+        }
+    }
+};;
+@if_test_day_7_production <- nrel_reply_production;;
+
+concept_student_message_about_test_day7
+<- sc_node_class;
+=> nrel_main_idtf:
+    [класс сообщений учащихся о запросе теста Дня 7]
+    (*
+        <- lang_ru;;
+    *);
+<- concept_message_topic;
+<= nrel_inclusion:
+    concept_student_message;
+=> nrel_corresponding_skill:
+    ...
+    (*
+        => nrel_main_idtf:
+            [показать тест Дня 7]
+            (*
+                <- lang_ru;;
+            *);;
+        <- concept_skill;;
+    *);
+=> nrel_example:
+    [Тест День 7]
+    (*
+        <- concept_example;;
+    *);
+=> nrel_reply_production_chain: <
+    @if_test_day_7_production
+>;
+=> nrel_message_keywords: [
+    тест день 7;
+    тест день седьмой;
+    тест седьмой день;
+    тест 7 день;
+    тест 7;
+    проверка день 7;
+    проверка 7;
+    проверь день 7;
+    проверь 7;
+    test day 7;
+    test 7
+];;
